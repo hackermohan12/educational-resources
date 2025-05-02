@@ -51,7 +51,7 @@ This repository contains an interactive collection of educational resources cove
 
 ## 🚀 Live Demo
 
-Visit the live version of the website: [Mohan Paudel's Educational Resources](https://mohanpaudel.com) (Replace with your actual URL when deployed)
+Visit the live version of the website: [Mohan Paudel's Educational Resources](https://paudelmohan.com.np/) 
 
 ## 📄 Resource Descriptions
 
@@ -95,7 +95,7 @@ Visit the live version of the website: [Mohan Paudel's Educational Resources](ht
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/mohanpaudel/educational-resources/issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/hackermohan12/educational-resources/issues).
 
 ## 📞 Contact
 
