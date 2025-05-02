@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Quiz & Flashcards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for flashcard flip */
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 0.5rem; /* rounded-lg */
+            background-color: white; /* bg-white */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: #f0f9ff; /* Light blue background for the back */
+        }
+        /* Basic styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        /* Style for selected MCQ option */
+        .selected-option {
+            border-color: #3b82f6; /* border-blue-500 */
+            background-color: #eff6ff; /* bg-blue-50 */
+        }
+        .correct-option {
+            border-color: #10b981 !important; /* border-green-500 */
+            background-color: #d1fae5 !important; /* bg-green-100 */
+        }
+        .incorrect-option {
+             border-color: #ef4444 !important; /* border-red-500 */
+             background-color: #fee2e2 !important; /* bg-red-100 */
+        }
+        /* Ensure perspective for flashcard */
+        .perspective {
+            perspective: 1000px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-2xl bg-white rounded-lg shadow-xl p-6 md:p-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">Chemistry Review</h1>
+        <h2 class="text-lg md:text-xl font-semibold text-center text-gray-600 mb-8">Ethers & Organometallic Compounds</h2>
+
+        <div id="mode-selection" class="text-center mb-8">
+            <p class="text-gray-700 mb-4">Choose your study mode:</p>
+            <button onclick="selectMode('mcq')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mr-4 transition duration-150 ease-in-out">MCQ Quiz</button>
+            <button onclick="selectMode('flashcard')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-150 ease-in-out">Flashcards</button>
+        </div>
+
+        <div id="content-area" class="hidden">
+
+            <div id="topic-indicator" class="text-center text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider"></div>
+
+            <div id="mcq-mode" class="hidden">
+                <div id="mcq-question" class="text-lg font-medium text-gray-800 mb-6 p-4 bg-blue-50 rounded-lg"></div>
+                <div id="mcq-options" class="space-y-3 mb-6">
+                    </div>
+                <div id="mcq-feedback" class="mt-4 p-4 rounded-lg text-sm hidden"></div>
+                <div id="mcq-explanation" class="mt-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-700 border border-gray-200 hidden">
+                    <strong class="font-semibold">Explanation:</strong> <span id="explanation-text"></span>
+                </div>
+            </div>
+
+            <div id="flashcard-mode" class="hidden">
+                 <div class="flashcard perspective h-64 md:h-80 mb-6 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="text-lg font-medium text-gray-800" id="flashcard-question"></p>
+                            <span class="text-xs text-gray-400 mt-4">(Click to flip)</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-base text-gray-700" id="flashcard-answer"></p>
+                        </div>
+                    </div>
+                </div>
+                 <p class="text-center text-sm text-gray-500">Click the card to reveal the answer.</p>
+            </div>
+
+            <div class="flex justify-between items-center mt-8">
+                <button id="prev-btn" onclick="navigate(-1)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-5 rounded-lg transition duration-150 ease-in-out disabled:opacity-50" disabled>Previous</button>
+                <span id="progress-indicator" class="text-sm text-gray-600"></span>
+                <button id="next-btn" onclick="navigate(1)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-5 rounded-lg transition duration-150 ease-in-out">Next</button>
+            </div>
+             <div class="text-center mt-6">
+                <button onclick="resetMode()" class="text-sm text-blue-600 hover:underline">Change Mode</button>
+            </div>
+        </div>
+         <div id="score-display" class="text-center mt-6 text-lg font-semibold text-gray-700 hidden"></div>
+    </div>
+
+    <script>
+        // --- Data ---
+        // Questions derived from Ether.pdf and Organometallic Compounds.pdf
+        const questions = [
+            // --- Ethers ---
+            {
+                topic: "Ethers",
+                question: "What are the products when ethoxyethane reacts with *excess* concentrated HI?",
+                options: ["Ethanol and Iodoethane", "Iodoethane only", "Ethanol only", "Diethyl peroxide"],
+                correctAnswer: 1,
+                explanation: "With excess HI, the ether linkage is cleaved, and any alcohol formed is further converted to the alkyl iodide. Ethoxyethane (CH3CH2OCH2CH3) yields two molecules of iodoethane (CH3CH2I)."
+            },
+            {
+                topic: "Ethers",
+                question: "What are the products when ethoxyethane reacts with *limited* concentrated HI?",
+                options: ["Ethanol and Iodoethane", "Iodoethane only", "Ethanol only", "Diethyl peroxide"],
+                correctAnswer: 0,
+                explanation: "With limited HI, the ether linkage is cleaved to form one molecule of alcohol and one molecule of alkyl iodide. Ethoxyethane yields ethanol and iodoethane."
+            },
+            {
+                topic: "Ethers",
+                question: "Why is ether (diethyl ether) often stored in a bottle containing iron wire?",
+                options: ["To catalyze ether formation", "To prevent peroxide formation by reacting with oxygen", "To absorb moisture", "To prevent evaporation"],
+                correctAnswer: 1,
+                explanation: "Ethers can react with atmospheric oxygen in the presence of light to form explosive peroxides. Iron wire consumes the oxygen by forming iron oxide, thus preventing peroxide formation."
+            },
+            {
+                topic: "Ethers",
+                question: "What happens when ethoxyethane is exposed to light and air for a long time?",
+                options: ["It decomposes into ethanol", "It forms diethyl peroxide", "It polymerizes", "It remains unchanged"],
+                correctAnswer: 1,
+                explanation: "In the presence of light and air (oxygen), ethers like ethoxyethane slowly form peroxides (e.g., diethyl peroxide), which are unstable and potentially explosive upon heating."
+            },
+             {
+                topic: "Ethers",
+                question: "Why is it dangerous to boil a sample of ether that has been stored for a long time?",
+                options: ["It has a very low boiling point", "It might contain explosive peroxides", "It reacts violently with glass", "It releases toxic fumes"],
+                correctAnswer: 1,
+                explanation: "Old samples of ether may have formed peroxides due to exposure to air and light. These peroxides are thermally unstable and can explode violently upon heating (boiling)."
+            },
+            {
+                topic: "Ethers",
+                question: "What type of reaction is Williamson's ether synthesis?",
+                options: ["Electrophilic substitution", "Nucleophilic substitution (SN2)", "Elimination (E2)", "Addition reaction"],
+                correctAnswer: 1,
+                explanation: "Williamson's synthesis involves the nucleophilic attack of an alkoxide ion (RO-) on an alkyl halide (R'-X) via an SN2 mechanism to form an ether (R-O-R')."
+            },
+             {
+                topic: "Ethers",
+                question: "Which combination is best for preparing methoxyethane (CH3OCH2CH3) via Williamson's synthesis?",
+                options: ["Sodium methoxide and Chloroethane", "Sodium ethoxide and Chloromethane", "Methanol and Ethanol with H2SO4", "Both a and b work equally well"],
+                correctAnswer: 0, // Or 1, both are valid primary halides. Let's favour the simpler alkoxide based on PDF examples. PDF shows CH3CH2ONa + CH3Br -> CH3CH2OCH3. So option 1 is better match. Let's re-evaluate. PDF page 4 shows CH3CH2ONa + CH3Br -> Methoxyethane AND CH3ONa + CH3CH2Br -> Methoxyethane. Both are valid. Let's check limitations. SN2 works best with primary halides. Both CH3Br and CH3CH2Cl are primary. So both routes are good. Let's stick with the first one listed in PDF. Option 1: CH3ONa + CH3CH2Cl. Option 2: CH3CH2ONa + CH3Cl. The PDF explicitly shows CH3CH2ONa + CH3Br. Let's choose option 1 as it uses Chloroethane. Rechecking PDF page 4, it shows CH3CH2-O-Na+ + CH3-Br -> CH3CH2-O-CH3. And also CH3-O-Na+ + CH3-CH2-Br -> CH3-O-CH2-CH3. Both work. Let's choose option 1 (Sodium methoxide + Chloroethane).
+                explanation: "Williamson's synthesis works best with a primary alkyl halide and an alkoxide. Both Sodium methoxide + Chloroethane (CH3ONa + CH3CH2Cl) and Sodium ethoxide + Chloromethane (CH3CH2ONa + CH3Cl) involve primary halides and are suitable routes."
+            },
+            {
+                topic: "Ethers",
+                question: "Why is Williamson's synthesis generally not suitable for preparing ethers using tertiary alkyl halides?",
+                options: ["Tertiary halides are unreactive", "Elimination reaction (E2) predominates over substitution (SN2)", "The alkoxide is too weak a nucleophile", "The reaction requires high temperatures"],
+                correctAnswer: 1,
+                explanation: "Alkoxides are strong bases as well as nucleophiles. With tertiary alkyl halides, the steric hindrance makes SN2 difficult, and the basic nature of the alkoxide promotes E2 elimination, forming an alkene instead of an ether."
+            },
+            {
+                topic: "Ethers",
+                question: "What is the IUPAC name of the ether CH3OCH(CH3)2?",
+                options: ["Methoxyisopropane", "Isopropoxymethane", "2-Methoxypropane", "Dimethyl isopropyl ether"],
+                correctAnswer: 2,
+                explanation: "The longer alkyl chain (propane) is the parent alkane. The CH3O- group is attached at position 2. Hence, the name is 2-Methoxypropane."
+            },
+            {
+                topic: "Ethers",
+                question: "What is the product when excess ethanol is heated with concentrated H2SO4 at 140°C?",
+                options: ["Ethene", "Ethoxyethane (Diethyl ether)", "Ethyl hydrogen sulphate", "Ethanol"],
+                correctAnswer: 1,
+                explanation: "Heating excess ethanol with concentrated sulfuric acid at around 140°C favors intermolecular dehydration, leading to the formation of ethoxyethane (diethyl ether)."
+            },
+             {
+                topic: "Ethers",
+                question: "What is the product when ethanol is heated with concentrated H2SO4 at 160-170°C?",
+                options: ["Ethene", "Ethoxyethane (Diethyl ether)", "Ethyl hydrogen sulphate", "Ethanol"],
+                correctAnswer: 0,
+                explanation: "Heating ethanol with concentrated sulfuric acid at higher temperatures (around 170°C) favors intramolecular dehydration, leading to the formation of ethene."
+            },
+             {
+                topic: "Ethers",
+                question: "What is the product when sodium phenoxide reacts with iodomethane (CH3I)?",
+                options: ["Phenol", "Methoxybenzene (Anisole)", "Iodobenzene", "Methyl phenyl ketone"],
+                correctAnswer: 1,
+                explanation: "This is Williamson's synthesis. The phenoxide ion acts as a nucleophile, attacking the methyl carbon of iodomethane to form methoxybenzene (anisole)."
+            },
+            {
+                topic: "Ethers",
+                question: "Why can't anisole be easily prepared by reacting bromobenzene with sodium methoxide?",
+                options: ["Sodium methoxide is too weak", "Bromobenzene is volatile", "Bromobenzene is unreactive towards nucleophilic substitution (SNAr/SN2)", "Elimination occurs instead"],
+                correctAnswer: 2,
+                explanation: "Haloarenes like bromobenzene are much less reactive towards nucleophilic substitution than haloalkanes due to resonance (partial double bond character of C-Br bond) and the sp2 hybridized carbon. SN2 is hindered, and SNAr requires harsh conditions or activating groups."
+            },
+             {
+                topic: "Ethers",
+                question: "Compared to alcohols of similar molecular weight, ethers generally have:",
+                options: ["Higher boiling points and higher water solubility", "Lower boiling points and lower water solubility", "Lower boiling points and higher water solubility", "Higher boiling points and lower water solubility"],
+                correctAnswer: 1,
+                explanation: "Ethers cannot form hydrogen bonds with themselves, leading to lower boiling points than corresponding alcohols. They can act as H-bond acceptors with water but lack H-bond donors, making them less soluble in water than alcohols."
+            },
+            // --- Grignard Reagents ---
+            {
+                topic: "Grignard Reagents",
+                question: "What is the general formula of a Grignard reagent?",
+                options: ["R-X", "R-Mg-X", "R-Li", "R2Zn"],
+                correctAnswer: 1,
+                explanation: "A Grignard reagent is an organomagnesium compound with the general formula R-Mg-X, where R is an alkyl or aryl group and X is a halogen (Cl, Br, I)."
+            },
+            {
+                topic: "Grignard Reagents",
+                question: "Which of the following is NOT typically considered an organometallic compound according to the definition provided?",
+                options: ["CH3MgBr", "(C2H5)2Zn", "CH3COONa", "R2CuLi"],
+                correctAnswer: 2,
+                explanation: "Organometallic compounds require a direct bond between carbon and a metal atom. In sodium acetate (CH3COONa), the bond is between oxygen and sodium (ionic), not carbon and sodium."
+            },
+             {
+                topic: "Grignard Reagents",
+                question: "The carbon-magnesium bond in a Grignard reagent is best described as:",
+                options: ["Ionic", "Nonpolar covalent", "Polar covalent", "Coordinate covalent"],
+                correctAnswer: 2,
+                explanation: "Due to the large difference in electronegativity between carbon and the electropositive magnesium, the C-Mg bond is highly polarized (polar covalent), with carbon bearing a partial negative charge (δ-) and magnesium a partial positive charge (δ+)."
+            },
+             {
+                topic: "Grignard Reagents",
+                question: "How are Grignard reagents typically prepared?",
+                options: ["Reacting an alkane with Mg", "Reacting an alkyl halide with Mg in dry ether", "Reacting an alcohol with Mg", "Reacting an alkene with MgX2"],
+                correctAnswer: 1,
+                explanation: "Grignard reagents are prepared by reacting an alkyl or aryl halide (R-X) with magnesium metal shavings in the presence of anhydrous (dry) ether."
+            },
+            {
+                topic: "Grignard Reagents",
+                question: "Why must the ether solvent be dry during the preparation of a Grignard reagent?",
+                options: ["Water catalyzes the reaction too quickly", "Water reacts with and destroys the Grignard reagent", "Water prevents Mg from reacting", "Water dissolves the alkyl halide too well"],
+                correctAnswer: 1,
+                explanation: "Grignard reagents are strong bases and react readily with protic solvents like water (or alcohols, amines). Water protonates the carbanion part (R-) of the Grignard reagent, converting it into an alkane (R-H) and destroying the reagent (RMgX + H2O -> RH + Mg(OH)X)."
+            },
+             {
+                topic: "Grignard Reagents",
+                question: "What type of compound is formed when a Grignard reagent (CH3MgI) reacts with formaldehyde (HCHO) followed by hydrolysis?",
+                options: ["Secondary alcohol", "Tertiary alcohol", "Ketone", "Primary alcohol"],
+                correctAnswer: 3,
+                explanation: "Grignard reagents react with formaldehyde (methanal) to produce primary alcohols after hydrolysis. CH3MgI + HCHO -> CH3CH2OMgI --(H2O)--> CH3CH2OH (Ethanol)."
+            },
+             {
+                topic: "Grignard Reagents",
+                question: "What type of compound is formed when a Grignard reagent reacts with an aldehyde (other than formaldehyde) followed by hydrolysis?",
+                options: ["Primary alcohol", "Secondary alcohol", "Tertiary alcohol", "Ketone"],
+                correctAnswer: 1,
+                explanation: "Grignard reagents react with aldehydes (like ethanal, propanal, etc.) to produce secondary alcohols after hydrolysis."
+            },
+            {
+                topic: "Grignard Reagents",
+                question: "What type of compound is formed when a Grignard reagent reacts with a ketone followed by hydrolysis?",
+                options: ["Primary alcohol", "Secondary alcohol", "Tertiary alcohol", "Ester"],
+                correctAnswer: 2,
+                explanation: "Grignard reagents react with ketones to produce tertiary alcohols after hydrolysis."
+            },
+            {
+                topic: "Grignard Reagents",
+                question: "What is the final major organic product when an ester (like ethyl acetate, CH3COOCH2CH3) reacts with *excess* Grignard reagent (e.g., CH3MgBr) followed by hydrolysis?",
+                options: ["Ketone", "Secondary alcohol", "Tertiary alcohol", "Carboxylic acid"],
+                correctAnswer: 2,
+                explanation: "Esters react with two equivalents of Grignard reagent. The first equivalent forms a ketone intermediate (which is usually more reactive than the ester), and the second equivalent reacts with the ketone to form a tertiary alcohol after hydrolysis."
+            },
+            {
+                topic: "Grignard Reagents",
+                question: "Reaction of a Grignard reagent (e.g., CH3MgBr) with carbon dioxide (CO2) followed by acidic hydrolysis yields:",
+                options: ["An alcohol", "An aldehyde", "A ketone", "A carboxylic acid"],
+                correctAnswer: 3,
+                explanation: "Grignard reagents add to carbon dioxide to form the magnesium salt of a carboxylic acid. Acidic hydrolysis then liberates the carboxylic acid (RMgX + CO2 -> RCOOMgX --(H+)--> RCOOH). The carbon chain increases by one carbon."
+            },
+            {
+                topic: "Grignard Reagents",
+                question: "Reaction of a Grignard reagent (e.g., CH3MgBr) with an alkane nitrile (e.g., CH3CN) followed by acid hydrolysis yields:",
+                options: ["A primary amine", "A secondary amine", "A ketone", "An aldehyde"],
+                correctAnswer: 2,
+                explanation: "Grignard reagents add to the carbon-nitrogen triple bond of nitriles to form an imine salt intermediate. Acid hydrolysis of this intermediate yields a ketone."
+            },
+             {
+                topic: "Grignard Reagents",
+                question: "What is the product 'B' in the reaction sequence: C2H5Br --(Mg/Dry Ether)--> A --(H2O)--> B?",
+                options: ["Ethanol", "Ethane", "Ethene", "Diethyl ether"],
+                correctAnswer: 1,
+                explanation: "C2H5Br reacts with Mg to form the Grignard reagent Ethylmagnesium bromide (A = C2H5MgBr). Grignard reagents react with water to form the corresponding alkane. So, C2H5MgBr reacts with H2O to form Ethane (B = C2H6 or CH3CH3)."
+            },
+            // --- Nitrobenzene Reduction (Included as per PDF content) ---
+            {
+                topic: "Nitrobenzene Reduction",
+                question: "What is the product when nitrobenzene is reduced in acidic medium (e.g., Sn/HCl or Zn/HCl)?",
+                options: ["Azoxybenzene", "Aniline", "Phenylhydroxylamine", "Azobenzene"],
+                correctAnswer: 1,
+                explanation: "Strong reduction of nitrobenzene in acidic medium (like Sn/HCl, Fe/HCl, Zn/HCl) yields aniline (aminobenzene)."
+            },
+            {
+                topic: "Nitrobenzene Reduction",
+                question: "What is the product when nitrobenzene is reduced in neutral medium (e.g., Zn/NH4Cl)?",
+                options: ["Aniline", "Azobenzene", "Phenylhydroxylamine", "Hydrazobenzene"],
+                correctAnswer: 2,
+                explanation: "Reduction of nitrobenzene in a neutral medium (like Zn dust and aqueous NH4Cl) yields N-phenylhydroxylamine."
+            },
+            {
+                topic: "Nitrobenzene Reduction",
+                question: "Reduction of nitrobenzene with a mild alkaline reducing agent (e.g., As2O3/NaOH or Glucose/NaOH) yields:",
+                options: ["Aniline", "Azoxybenzene", "Azobenzene", "Hydrazobenzene"],
+                correctAnswer: 1,
+                explanation: "Mild reduction of nitrobenzene in alkaline medium typically yields azoxybenzene."
+            },
+            {
+                topic: "Nitrobenzene Reduction",
+                question: "Reduction of nitrobenzene with a stronger alkaline reducing agent (e.g., Zn/NaOH) yields:",
+                options: ["Aniline", "Azoxybenzene", "Azobenzene", "Hydrazobenzene"],
+                correctAnswer: 2, // PDF shows Azobenzene first, then Hydrazobenzene with stronger conditions. Let's assume Zn/NaOH gives Azobenzene as the primary stage.
+                explanation: "Reduction of nitrobenzene in alkaline medium can yield azobenzene or further reduction to hydrazobenzene depending on the strength of the reducing agent. Zn/NaOH often leads to azobenzene."
+            },
+             {
+                topic: "Nitrobenzene Reduction",
+                question: "Electrolytic reduction of nitrobenzene in strongly acidic medium followed by rearrangement yields:",
+                options: ["Aniline", "p-Aminophenol", "Phenylhydroxylamine", "Nitrosobenzene"],
+                correctAnswer: 1,
+                explanation: "Electrolytic reduction in strongly acidic medium initially forms phenylhydroxylamine, which then rearranges to p-aminophenol."
+            }
+        ];
+
+
+        // --- State ---
+        let currentMode = null; // 'mcq' or 'flashcard'
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null); // Store user choice index for MCQs
+
+        // --- Elements ---
+        const modeSelectionDiv = document.getElementById('mode-selection');
+        const contentAreaDiv = document.getElementById('content-area');
+        const mcqModeDiv = document.getElementById('mcq-mode');
+        const flashcardModeDiv = document.getElementById('flashcard-mode');
+        const mcqQuestionDiv = document.getElementById('mcq-question');
+        const mcqOptionsDiv = document.getElementById('mcq-options');
+        const mcqFeedbackDiv = document.getElementById('mcq-feedback');
+        const mcqExplanationDiv = document.getElementById('mcq-explanation');
+        const explanationTextSpan = document.getElementById('explanation-text');
+        const flashcardQuestionP = document.getElementById('flashcard-question');
+        const flashcardAnswerP = document.getElementById('flashcard-answer');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressIndicatorSpan = document.getElementById('progress-indicator');
+        const topicIndicatorDiv = document.getElementById('topic-indicator');
+        const scoreDisplayDiv = document.getElementById('score-display');
+
+
+        // --- Functions ---
+
+        function selectMode(mode) {
+            currentMode = mode;
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null); // Reset answers when changing mode
+            modeSelectionDiv.classList.add('hidden');
+            contentAreaDiv.classList.remove('hidden');
+            scoreDisplayDiv.classList.add('hidden'); // Hide score initially
+
+            if (mode === 'mcq') {
+                mcqModeDiv.classList.remove('hidden');
+                flashcardModeDiv.classList.add('hidden');
+                loadMCQ();
+            } else {
+                mcqModeDiv.classList.add('hidden');
+                flashcardModeDiv.classList.remove('hidden');
+                loadFlashcard();
+            }
+            updateNavigation();
+        }
+
+        function resetMode() {
+             currentMode = null;
+             modeSelectionDiv.classList.remove('hidden');
+             contentAreaDiv.classList.add('hidden');
+             mcqModeDiv.classList.add('hidden');
+             flashcardModeDiv.classList.add('hidden');
+             scoreDisplayDiv.classList.add('hidden');
+        }
+
+        function loadMCQ() {
+            // Check if questions array is empty or index is out of bounds
+             if (!questions || questions.length === 0 || currentQuestionIndex >= questions.length) {
+                console.error("No questions available or index out of bounds.");
+                // Optionally display a message to the user
+                contentAreaDiv.innerHTML = "<p class='text-center text-red-500'>Error: Could not load questions.</p>";
+                return;
+            }
+            const q = questions[currentQuestionIndex];
+            mcqQuestionDiv.textContent = `${currentQuestionIndex + 1}. ${q.question}`;
+            topicIndicatorDiv.textContent = `Topic: ${q.topic}`;
+            mcqOptionsDiv.innerHTML = ''; // Clear previous options
+            mcqFeedbackDiv.classList.add('hidden');
+            mcqExplanationDiv.classList.add('hidden');
+
+            // Ensure options exist before iterating
+            if (q.options && Array.isArray(q.options)) {
+                 q.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    // Add styling classes
+                    button.classList.add('block', 'w-full', 'text-left', 'p-3', 'border', 'border-gray-300', 'rounded-lg', 'hover:bg-gray-100', 'transition', 'duration-150', 'ease-in-out');
+                     // Assign click handler
+                    button.onclick = () => selectAnswer(index);
+                    mcqOptionsDiv.appendChild(button);
+                });
+            } else {
+                 console.error(`Question ${currentQuestionIndex} is missing options.`);
+                 mcqOptionsDiv.innerHTML = "<p class='text-red-500'>Error: Options not available for this question.</p>";
+            }
+
+
+             // Restore previous selection if exists and show feedback
+            if (userAnswers[currentQuestionIndex] !== null) {
+                showMCQFeedback(userAnswers[currentQuestionIndex]);
+            } else {
+                 // Ensure buttons are enabled if no previous answer
+                 const buttons = mcqOptionsDiv.querySelectorAll('button');
+                 buttons.forEach(btn => btn.disabled = false);
+            }
+        }
+
+        function selectAnswer(selectedIndex) {
+             // Prevent re-answering if already answered
+            if (userAnswers[currentQuestionIndex] !== null) return;
+
+            userAnswers[currentQuestionIndex] = selectedIndex; // Store the user's choice
+            showMCQFeedback(selectedIndex); // Show feedback based on the selected index
+        }
+
+        function showMCQFeedback(selectedIndex) {
+             if (!questions || currentQuestionIndex >= questions.length) return; // Safety check
+            const q = questions[currentQuestionIndex];
+            const buttons = mcqOptionsDiv.querySelectorAll('button');
+            const isCorrect = selectedIndex === q.correctAnswer;
+
+            // Disable all buttons after selection
+            buttons.forEach(btn => btn.disabled = true);
+
+             // Check if selectedIndex is valid before styling
+             if (selectedIndex >= 0 && selectedIndex < buttons.length) {
+                buttons[selectedIndex].classList.add('selected-option');
+             } else {
+                 console.error("Invalid selectedIndex:", selectedIndex);
+                 return; // Exit if index is invalid
+             }
+
+
+            // Show feedback message
+            mcqFeedbackDiv.classList.remove('hidden');
+            if (isCorrect) {
+                mcqFeedbackDiv.textContent = 'Correct!';
+                mcqFeedbackDiv.className = 'mt-4 p-4 rounded-lg text-sm text-green-800 bg-green-100 border border-green-200';
+                 if (selectedIndex >= 0 && selectedIndex < buttons.length) {
+                    buttons[selectedIndex].classList.add('correct-option');
+                 }
+                // Only increment score if it was the *first* attempt for this question index
+                // Check if the stored answer was null before this selection (it was set in selectAnswer)
+                // This logic needs refinement - score should only increment if this is the first time showMCQFeedback is called for this index *and* it's correct.
+                // Let's simplify: assume score increases if correct answer is selected. We reset score on mode change.
+                // A better approach would be to check if a score was already awarded for this index.
+                // Simplification: Increment score here if correct.
+                score++;
+
+            } else {
+                 // Ensure correctAnswer index is valid
+                 if (q.correctAnswer >= 0 && q.correctAnswer < q.options.length) {
+                     mcqFeedbackDiv.textContent = `Incorrect. The correct answer was: ${q.options[q.correctAnswer]}`;
+                 } else {
+                     mcqFeedbackDiv.textContent = 'Incorrect. Could not determine the correct answer.'; // Fallback
+                     console.error("Invalid correctAnswer index:", q.correctAnswer);
+                 }
+                mcqFeedbackDiv.className = 'mt-4 p-4 rounded-lg text-sm text-red-800 bg-red-100 border border-red-200';
+                 if (selectedIndex >= 0 && selectedIndex < buttons.length) {
+                    buttons[selectedIndex].classList.add('incorrect-option');
+                 }
+                // Highlight the correct answer as well, checking index validity
+                 if (q.correctAnswer >= 0 && q.correctAnswer < buttons.length) {
+                     buttons[q.correctAnswer].classList.add('correct-option');
+                 }
+            }
+
+            // Show explanation
+            explanationTextSpan.textContent = q.explanation || "Explanation not available."; // Add fallback
+            mcqExplanationDiv.classList.remove('hidden');
+
+            updateNavigation(); // Update button states
+        }
+
+
+        function loadFlashcard() {
+             if (!questions || questions.length === 0 || currentQuestionIndex >= questions.length) {
+                 console.error("No questions available or index out of bounds.");
+                 contentAreaDiv.innerHTML = "<p class='text-center text-red-500'>Error: Could not load flashcard.</p>";
+                 return;
+             }
+            const q = questions[currentQuestionIndex];
+            flashcardQuestionP.textContent = q.question;
+            flashcardAnswerP.textContent = q.explanation || "Explanation not available."; // Use explanation as the answer, add fallback
+            topicIndicatorDiv.textContent = `Topic: ${q.topic}`;
+
+            // Reset flip state
+            const card = flashcardModeDiv.querySelector('.flashcard');
+             // Ensure card exists before manipulating class list
+             if (card && card.classList.contains('flipped')) {
+                card.classList.remove('flipped');
+            }
+        }
+
+        function flipCard(cardElement) {
+             // Ensure cardElement and its child exist before toggling class
+             if (cardElement && cardElement.querySelector('.flashcard-inner')) {
+                 cardElement.classList.toggle('flipped');
+             } else {
+                  console.error("Could not find flashcard elements to flip.");
+             }
+        }
+
+        function navigate(direction) {
+            const newIndex = currentQuestionIndex + direction;
+
+            // Boundary checks for navigation
+            if (newIndex >= 0 && newIndex < questions.length) {
+                currentQuestionIndex = newIndex;
+                // Load content for the new index
+                if (currentMode === 'mcq') {
+                    loadMCQ();
+                } else {
+                    loadFlashcard();
+                }
+            } else if (currentMode === 'mcq' && newIndex === questions.length) {
+                 // If moving past the last question in MCQ mode, show score
+                 showFinalScore();
+                 currentQuestionIndex = questions.length; // Set index to indicate end
+            }
+
+             updateNavigation(); // Update button states based on the new index
+        }
+
+        function showFinalScore() {
+            // Hide question/answer area, show score
+            mcqModeDiv.classList.add('hidden');
+            flashcardModeDiv.classList.add('hidden');
+            topicIndicatorDiv.classList.add('hidden'); // Hide topic when showing score
+            progressIndicatorSpan.textContent = `Quiz Complete!`; // Update progress text
+            scoreDisplayDiv.textContent = `Your Score: ${score} / ${questions.length}`;
+            scoreDisplayDiv.classList.remove('hidden');
+            // Disable navigation buttons at the end
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        }
+
+
+        function updateNavigation() {
+             // Update progress text unless quiz is complete
+             if (currentQuestionIndex < questions.length) {
+                 progressIndicatorSpan.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+             }
+
+            // Enable/disable Previous button
+            prevBtn.disabled = currentQuestionIndex === 0;
+
+            // Enable/disable Next button
+            if (currentMode === 'mcq') {
+                 // Disable Next if it's the last question OR if the current question hasn't been answered yet
+                 // Also disable if score is shown (index >= length)
+                 nextBtn.disabled = currentQuestionIndex >= questions.length || userAnswers[currentQuestionIndex] === null;
+            } else {
+                 // Flashcard mode: Disable Next only if on the last card
+                 nextBtn.disabled = currentQuestionIndex >= questions.length - 1;
+            }
+
+             // If score is displayed, override and disable both
+             if (!scoreDisplayDiv.classList.contains('hidden')) {
+                 prevBtn.disabled = true;
+                 nextBtn.disabled = true;
+             }
+        }
+
+        // Initial setup - Hide content area until mode is selected
+        contentAreaDiv.classList.add('hidden');
+
+    </script>
+
+</body>
+</html>

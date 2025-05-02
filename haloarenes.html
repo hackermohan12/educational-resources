@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Practice: Chlorobenzene</title> <!-- Updated Title -->
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles from the target example (Tailwind Reference) */
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 0.5rem; /* rounded-lg */
+            background-color: white; /* bg-white */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: #f0f9ff; /* Light blue background */
+            align-items: flex-start; /* Align text left */
+            text-align: left;
+        }
+        /* Base body font and background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        /* Custom styles for MCQ option states */
+        .selected-option { /* Optional */ }
+        .correct-option {
+            border-color: #10b981 !important; /* border-green-500 */
+            background-color: #d1fae5 !important; /* bg-green-100 */
+            color: #065f46 !important; /* text-green-800 */
+        }
+        .incorrect-option {
+             border-color: #ef4444 !important; /* border-red-500 */
+             background-color: #fee2e2 !important; /* bg-red-100 */
+             color: #991b1b !important; /* text-red-800 */
+        }
+         .reveal-correct-option { /* Style for correct option when wrong one selected */
+              border-color: #10b981 !important;
+         }
+        /* Ensure perspective for flashcard */
+        .perspective {
+            perspective: 1000px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Main Container -->
+    <div class="w-full max-w-2xl bg-white rounded-lg shadow-xl p-6 md:p-8">
+        <!-- Title Area -->
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">Chlorobenzene Chemistry Practice</h1>
+
+        <!-- Mode Selection Area (Initially Visible) -->
+        <div id="mode-selection" class="text-center mb-8">
+            <p class="text-gray-700 mb-4 text-lg">Choose your learning mode:</p>
+            <button onclick="selectMode('mcq')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mr-4 transition duration-150 ease-in-out">MCQ Quiz</button>
+            <button onclick="selectMode('flashcard')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-150 ease-in-out">Flashcards</button>
+            <!-- No Change Topic Button needed here -->
+        </div>
+
+        <!-- Content Display Area (Quiz/Flashcards - Initially Hidden) -->
+        <div id="content-area" class="hidden">
+            <!-- Top Bar: Topic (Fixed), Progress, Score -->
+            <div id="top-bar" class="flex justify-between items-center flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600 mb-6 border-b pb-2">
+                <span id="topic-title-display" class="font-medium">Topic: Chlorobenzene</span>
+                <span id="progress-indicator" class="font-medium">Question X of Y</span>
+                <span id="score-display" class="font-semibold text-blue-600">Score: 0</span>
+            </div>
+
+            <!-- MCQ Mode View -->
+            <div id="mcq-mode" class="hidden">
+                <div id="mcq-question" class="text-lg font-medium text-gray-800 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100"></div>
+                <div id="mcq-options" class="space-y-3 mb-6"></div>
+                <!-- Combined Feedback/Explanation Block -->
+                <div id="mcq-feedback-explanation" class="mt-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-700 border border-gray-200 hidden">
+                    <strong id="feedback-status" class="font-semibold block mb-1"></strong> <!-- Correct/Incorrect -->
+                    <span id="explanation-text"></span>
+                </div>
+            </div>
+
+            <!-- Flashcard Mode View -->
+            <div id="flashcard-mode" class="hidden">
+                 <div class="flashcard perspective h-64 md:h-80 mb-4 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="text-lg font-medium text-gray-800 px-4" id="flashcard-question"></p>
+                            <span class="text-xs text-gray-400 mt-4 absolute bottom-4">(Click to flip)</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-base font-semibold text-blue-700 mb-2" id="flashcard-answer-text"></p>
+                            <p class="text-sm text-gray-700" id="flashcard-explanation-text"></p>
+                        </div>
+                    </div>
+                 </div>
+                  <div class="text-center">
+                     <button id="flip-btn" onclick="flipCard(document.querySelector('#flashcard-mode .flashcard'))" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-5 rounded-lg transition duration-150 ease-in-out mb-4">Flip / Show Answer</button>
+                  </div>
+                 <p class="text-center text-sm text-gray-500 mb-4">Click the card or button to reveal the answer.</p>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div id="navigation-controls" class="flex justify-between items-center mt-8">
+                 <span></span> <!-- Placeholder for spacing -->
+                 <button id="next-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-5 rounded-lg transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+            </div>
+
+            <!-- Change Mode Link -->
+             <div class="text-center mt-6">
+                <button id="restart-btn" onclick="resetToModeSelection()" class="text-sm text-blue-600 hover:underline">Change Mode</button>
+            </div>
+        </div>
+
+         <!-- Results Display Area (Reuses Content Area Structure) -->
+         <div id="results-display" class="text-center mt-6 hidden">
+              <!-- Populated by JS -->
+         </div>
+
+    </div>
+
+    <script>
+        // --- Question Data (Chlorobenzene Only) ---
+        // Adapting to use correctAnswer index
+        const questions = [
+            { topic: "Chlorobenzene", question: "Why is the chloro group in chlorobenzene considered ortho- and para-directing for electrophilic aromatic substitution?", options: ["Due to its strong electron-withdrawing inductive (-I) effect.", "Due to its ability to donate electrons into the ring via resonance (+R effect).", "Because it increases the overall electron density of the benzene ring.", "Because it stabilizes the intermediate carbocation primarily at the meta position."], correctAnswer: 1, explanation: "The +R effect from lone pair donation increases electron density at o/p positions." },
+            { topic: "Chlorobenzene", question: "Despite being ortho/para-directing, the chloro group deactivates the benzene ring towards electrophilic substitution compared to benzene itself. Why?", options: ["The resonance effect (+R) dominates the inductive effect (-I).", "The inductive effect (-I) dominates the resonance effect (+R).", "Steric hindrance prevents the electrophile from attacking easily.", "Chlorine forms a stable complex with the electrophile."], correctAnswer: 1, explanation: "The strong electron-withdrawing -I effect outweighs the electron-donating +R effect, reducing overall ring reactivity." },
+            { topic: "Chlorobenzene", question: "In chlorobenzene, the electron density is relatively higher at which positions due to resonance?", options: ["Ortho and Meta", "Meta and Para", "Ortho and Para", "Only Meta"], correctAnswer: 2, explanation: "Resonance structures place negative charge density specifically at the ortho and para positions." },
+            { topic: "Chlorobenzene", question: "The reaction of chlorobenzene with chloromethane in the presence of anhydrous AlCl3 (Friedel-Crafts Alkylation) yields mainly:", options: ["Benzyl chloride", "Dichlorobenzene", "o-Chlorotoluene and p-Chlorotoluene", "m-Chlorotoluene"], correctAnswer: 2, explanation: "Friedel-Crafts alkylation is directed to the o/p positions by the chlorine." },
+            { topic: "Chlorobenzene", question: "What are the reactants needed to synthesize DDT starting from chlorobenzene?", options: ["Chloroform and conc. H2SO4", "Chloral (Trichloroacetaldehyde) and conc. H2SO4", "Acetyl chloride and AlCl3", "Methyl chloride and AlCl3"], correctAnswer: 1, explanation: "DDT is formed by the condensation of chloral with two molecules of chlorobenzene catalyzed by sulfuric acid." },
+            { topic: "Chlorobenzene", question: "What is the correct IUPAC name for DDT?", options: ["Dichlorodiphenyltrichloroethane", "1,1-dichloro-2,2-bis(4-chlorophenyl)ethane", "1,1,1-trichloro-2,2-bis(p-chlorophenyl)ethane", "2,2-bis(p-chlorophenyl)-1,1,1-trichloroethane"], correctAnswer: 2, explanation: "Numbering starts from the end with more chlorines on one carbon." },
+            { topic: "Chlorobenzene", question: "The reaction of chlorobenzene with sodium metal in dry ether to form diphenyl is known as:", options: ["Wurtz Reaction", "Fittig Reaction", "Wurtz-Fittig Reaction", "Ullmann Reaction"], correctAnswer: 1, explanation: "Fittig reaction couples two aryl halides." },
+            { topic: "Chlorobenzene", question: "Chlorobenzene can be prepared from benzene diazonium chloride (BDC) using which reagent(s)?", options: ["Cl2 / FeCl3", "HCl / Anhydrous AlCl3", "CuCl / HCl (Sandmeyer Reaction)", "Aqueous NaCl"], correctAnswer: 2, explanation: "The Sandmeyer reaction uses cuprous chloride to replace the diazonium group with chlorine." },
+            { topic: "Chlorobenzene", question: "Conversion of chlorobenzene to anisole (methoxybenzene) involves which sequence of reagents according to Williamson synthesis principles applied here?", options: ["CH3Cl / AlCl3", "NaOH (aq), heat/pressure, followed by CH3Br", "Na / dry ether, followed by CH3OH", "Conc. HNO3 / Conc. H2SO4, followed by reduction"], correctAnswer: 1, explanation: "Requires forming the phenoxide nucleophile first (Dow process conditions), then SN2 with methyl bromide." },
+            { topic: "Chlorobenzene", question: "The nitration of chlorobenzene (Conc. HNO3 / Conc. H2SO4) primarily yields:", options: ["m-Nitrochlorobenzene", "o-Nitrochlorobenzene and p-Nitrochlorobenzene", "Nitrobenzene", "Picric acid"], correctAnswer: 1, explanation: "Nitration is directed to the o/p positions." },
+            { topic: "Chlorobenzene", question: "Chlorobenzene can be converted back to benzene using:", options: ["H2 / Ni at high temp/pressure", "Ni-Al alloy / NaOH", "Zn / HCl", "LiAlH4"], correctAnswer: 1, explanation: "Ni-Al alloy/NaOH is a specific reagent for reducing aryl halides to arenes." },
+            { topic: "Chlorobenzene", question: "The reaction of chlorobenzene with ethanoyl chloride (acetyl chloride) in the presence of anhydrous AlCl3 is called:", options: ["Friedel-Crafts Alkylation", "Friedel-Crafts Acylation", "Clemmensen Reduction", "Reimer-Tiemann Reaction"], correctAnswer: 1, explanation: "Introduction of an acyl group (R-C=O) is Friedel-Crafts Acylation." },
+            { topic: "Chlorobenzene", question: "The major products of the Friedel-Crafts Acylation of chlorobenzene with ethanoyl chloride are:", options: ["o-Chloroacetophenone and p-Chloroacetophenone", "m-Chloroacetophenone", "Acetophenone", "Chlorobenzoyl chloride"], correctAnswer: 0, explanation: "Acylation is directed to the o/p positions." },
+            { topic: "Chlorobenzene", question: "Chlorobenzene can be converted to benzonitrile (phenyl cyanide) using:", options: ["KCN / EtOH", "HCN / AlCl3", "CuCN / DMF (or Pyridine) at high temperature", "NaCN / Acetone"], correctAnswer: 2, explanation: "Replacing Cl on an aryl ring with CN typically requires CuCN under heating (Rosenmund–von Braun reaction)." },
+            { topic: "Chlorobenzene", question: "How can benzonitrile be converted to benzylamine?", options: ["Hydrolysis with HCl/H2O", "Reaction with NH3", "Reduction with LiAlH4 or H2/Catalyst", "Oxidation with KMnO4"], correctAnswer: 2, explanation: "Nitriles are reduced to primary amines by strong reducing agents." },
+            { topic: "Chlorobenzene", question: "How can benzonitrile be converted to benzamide?", options: ["Complete hydrolysis with acid/heat", "Partial controlled hydrolysis with acid or base", "Reduction with SnCl2/HCl", "Reaction with ammonia and heat"], correctAnswer: 1, explanation: "Careful hydrolysis (often using H2O2/base or controlled acid) stops at the amide stage." },
+            { topic: "Chlorobenzene", question: "Which is a standard laboratory method for preparing chlorobenzene from benzene?", options: ["Reaction with Cl2 in sunlight", "Reaction with HCl gas", "Reaction with Cl2 in the presence of FeCl3 (dark)", "Reaction with SOCl2"], correctAnswer: 2, explanation: "Electrophilic aromatic substitution using Cl2 and a Lewis acid catalyst." },
+            { topic: "Chlorobenzene", question: "What happens when chlorobenzene is heated with Ni-Al alloy in an alkaline medium?", options: ["It forms phenol", "It forms benzene", "It forms diphenyl", "It forms aniline"], correctAnswer: 1, explanation: "Reduction of the C-Cl bond yields benzene." },
+            { topic: "Chlorobenzene", question: "DDT is primarily used as a(n):", options: ["Fertilizer", "Insecticide", "Herbicide", "Solvent"], correctAnswer: 1, explanation: "DDT was a widely used insecticide." },
+            { topic: "Chlorobenzene", question: "A major environmental concern regarding DDT is its:", options: ["High solubility in water", "Rapid decomposition", "Non-biodegradable nature", "Explosive properties"], correctAnswer: 2, explanation: "DDT persists in the environment and bioaccumulates." },
+            { topic: "Chlorobenzene", question: "Nucleophilic substitution is difficult in chlorobenzene compared to chloroethane primarily because:", options: ["The C-Cl bond in chlorobenzene has partial double bond character due to resonance.", "The carbon atom attached to Cl in chlorobenzene is sp3 hybridized.", "Chlorobenzene is less polar than chloroethane.", "The inductive effect of Cl is stronger in chlorobenzene."], correctAnswer: 0, explanation: "Resonance makes the C-Cl bond stronger and harder to break." },
+            { topic: "Chlorobenzene", question: "What is the hybridization of the carbon atom bonded to the halogen in a haloarene like chlorobenzene?", options: ["sp", "sp2", "sp3", "dsp2"], correctAnswer: 1, explanation: "Carbons in a benzene ring are sp2 hybridized." },
+            { topic: "Chlorobenzene", question: "Which factors contribute to the difficulty of SN reactions in haloarenes?", options: ["Resonance stabilization (partial C-X double bond)", "sp2 hybridized carbon (holds electrons tighter)", "Repulsion between ring & nucleophile", "All of the above"], correctAnswer: 3, explanation: "All listed factors make SN reactions on haloarenes unfavorable under normal conditions." },
+            { topic: "Chlorobenzene", question: "The reaction of chlorobenzene with methyl chloride and sodium metal in dry ether (Wurtz-Fittig Reaction) produces:", options: ["Diphenyl", "Toluene", "Ethylbenzene", "Xylene"], correctAnswer: 1, explanation: "Wurtz-Fittig couples an aryl halide and an alkyl halide." },
+            { topic: "Chlorobenzene", question: "The Raschig process prepares chlorobenzene from benzene using:", options: ["Cl2 / FeCl3", "HCl / O2 / Catalyst", "SOCl2 / Pyridine", "PCl5"], correctAnswer: 1, explanation: "This industrial process uses HCl and oxygen (oxy-chlorination)." },
+            { topic: "Chlorobenzene", question: "The Dow process converts chlorobenzene to:", options: ["Benzene", "Aniline", "Phenol", "Benzoic acid"], correctAnswer: 2, explanation: "High-temperature hydrolysis with NaOH yields phenol." },
+            { topic: "Chlorobenzene", question: "To convert benzene into aniline, the typical industrial/lab sequence is:", options: ["Chlorination -> NH3", "Nitration -> Reduction", "Sulfonation -> NaOH fusion", "Acylation -> Reduction"], correctAnswer: 1, explanation: "Nitrate benzene, then reduce the nitro group to an amino group." },
+            { topic: "Chlorobenzene", question: "The reagent used to convert aniline to benzene diazonium chloride (BDC) is:", options: ["HNO3 / H2SO4", "NaNO2 / HCl at 0-5 °C", "CuCl / HCl", "LiAlH4"], correctAnswer: 1, explanation: "Standard diazotization conditions." },
+            { topic: "Chlorobenzene", question: "What product is formed when benzene reacts with excess chlorine in the presence of sunlight (UV light)?", options: ["Chlorobenzene", "Dichlorobenzene", "Benzene hexachloride (BHC / Gammexane)", "Hexachlorobenzene"], correctAnswer: 2, explanation: "Free-radical addition reaction, not substitution." },
+            { topic: "Chlorobenzene", question: "Conversion of chlorobenzene to phenol requires harsh conditions like:", options: ["Dilute NaOH at room temp", "Aqueous NaOH at high temperature and pressure (Dow Process)", "Steam distillation", "Reaction with water and AlCl3"], correctAnswer: 1, explanation: "The Dow Process conditions are needed due to the low reactivity towards SNAr." }
+        ];
+
+
+        // --- State ---
+        let currentMode = null; // 'mcq' or 'flashcard'
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = []; // Stores selected index for MCQ
+        let shuffledQuestions = []; // Holds shuffled questions for the current session
+
+        // --- DOM Elements ---
+        const modeSelectionDiv = document.getElementById('mode-selection');
+        const contentAreaDiv = document.getElementById('content-area');
+        const topBarDiv = document.getElementById('top-bar');
+        const topicTitleDisplaySpan = document.getElementById('topic-title-display');
+        const progressIndicatorSpan = document.getElementById('progress-indicator');
+        const scoreDisplaySpan = document.getElementById('score-display');
+
+        const mcqModeDiv = document.getElementById('mcq-mode');
+        const mcqQuestionDiv = document.getElementById('mcq-question');
+        const mcqOptionsDiv = document.getElementById('mcq-options');
+        const mcqFeedbackExplanationDiv = document.getElementById('mcq-feedback-explanation');
+        const feedbackStatusStrong = document.getElementById('feedback-status');
+        const explanationTextSpan = document.getElementById('explanation-text');
+
+        const flashcardModeDiv = document.getElementById('flashcard-mode');
+        const flashcardQuestionP = document.getElementById('flashcard-question');
+        const flashcardAnswerTextP = document.getElementById('flashcard-answer-text');
+        const flashcardExplanationTextP = document.getElementById('flashcard-explanation-text');
+        const flipBtn = document.getElementById('flip-btn');
+
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn'); // Button at the bottom
+        const resultsDisplayDiv = document.getElementById('results-display');
+
+        // --- Helper Functions ---
+        function shuffleArray(array) {
+            let newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function hideAllViews() {
+             modeSelectionDiv.classList.add('hidden');
+             contentAreaDiv.classList.add('hidden');
+             resultsDisplayDiv.classList.add('hidden');
+        }
+
+        // Function to go back to mode selection (e.g., from results or Change Mode button)
+        function resetToModeSelection() {
+             hideAllViews();
+             modeSelectionDiv.classList.remove('hidden');
+             // Reset state variables that should clear when changing mode
+             currentMode = null;
+             currentQuestionIndex = 0;
+             score = 0;
+             userAnswers = [];
+             shuffledQuestions = [];
+        }
+
+        function selectMode(mode) {
+             currentMode = mode;
+             currentQuestionIndex = 0;
+             score = 0;
+             // Use the fixed 'questions' array for Chlorobenzene
+             shuffledQuestions = shuffleArray(questions);
+             userAnswers = new Array(shuffledQuestions.length).fill(null);
+
+             hideAllViews();
+             contentAreaDiv.classList.remove('hidden');
+             mcqFeedbackExplanationDiv.classList.add('hidden');
+             nextBtn.textContent = 'Next';
+             resultsDisplayDiv.classList.add('hidden');
+
+             if (currentMode === 'mcq') {
+                 mcqModeDiv.classList.remove('hidden');
+                 flashcardModeDiv.classList.add('hidden');
+                 scoreDisplaySpan.classList.remove('hidden');
+                 loadMCQ();
+             } else { // flashcard
+                 mcqModeDiv.classList.add('hidden');
+                 flashcardModeDiv.classList.remove('hidden');
+                 scoreDisplaySpan.classList.add('hidden');
+                 loadFlashcard();
+             }
+             updateTopBar();
+             updateNavigation();
+         }
+
+         function updateTopBar() {
+              topicTitleDisplaySpan.textContent = `Topic: Chlorobenzene (${currentMode})`;
+              progressIndicatorSpan.textContent = `${currentMode === 'mcq' ? 'Question' : 'Card'} ${currentQuestionIndex + 1} of ${shuffledQuestions.length}`;
+              if (currentMode === 'mcq') {
+                  scoreDisplaySpan.textContent = `Score: ${score}`;
+                  scoreDisplaySpan.classList.remove('hidden');
+              } else {
+                   scoreDisplaySpan.classList.add('hidden');
+              }
+         }
+
+         // --- MCQ Functions ---
+         function loadMCQ() {
+             if (currentQuestionIndex >= shuffledQuestions.length) {
+                 showFinalResults();
+                 return;
+             }
+             const q = shuffledQuestions[currentQuestionIndex];
+             mcqQuestionDiv.textContent = q.question;
+             mcqOptionsDiv.innerHTML = '';
+             mcqFeedbackExplanationDiv.classList.add('hidden');
+
+             // Shuffle options for display
+             const displayOptions = shuffleArray(q.options);
+
+             displayOptions.forEach(option => {
+                 const button = document.createElement('button');
+                 button.textContent = option;
+                 button.className = 'option-button block w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300';
+                 // Find the original index of this option to check answer later
+                 const originalIndex = q.options.indexOf(option);
+                 button.onclick = () => handleMCQAnswer(originalIndex);
+                 mcqOptionsDiv.appendChild(button);
+             });
+
+             const previousAnswerIndex = userAnswers[currentQuestionIndex];
+             if (previousAnswerIndex !== null) {
+                 showMCQFeedback(previousAnswerIndex, true);
+             } else {
+                  mcqOptionsDiv.querySelectorAll('.option-button').forEach(btn => btn.disabled = false);
+             }
+             updateTopBar();
+             updateNavigation();
+         }
+
+        function handleMCQAnswer(selectedIndex) {
+             if (userAnswers[currentQuestionIndex] !== null) return;
+             userAnswers[currentQuestionIndex] = selectedIndex;
+             showMCQFeedback(selectedIndex, false);
+         }
+
+        function showMCQFeedback(selectedIndex, isRestoring) {
+             const q = shuffledQuestions[currentQuestionIndex];
+             const buttons = mcqOptionsDiv.querySelectorAll('.option-button');
+             const isCorrect = selectedIndex === q.correctAnswer;
+
+             buttons.forEach(btn => btn.disabled = true);
+
+             buttons.forEach(btn => {
+                 const btnText = btn.textContent;
+                 const originalIndexOfBtn = q.options.indexOf(btnText); // Get original index based on text
+
+                 if (originalIndexOfBtn === q.correctAnswer) {
+                     btn.classList.add('correct-option');
+                 }
+                 if (originalIndexOfBtn === selectedIndex && !isCorrect) {
+                     btn.classList.add('incorrect-option');
+                 }
+             });
+
+             mcqFeedbackExplanationDiv.classList.remove('hidden');
+             explanationTextSpan.textContent = q.explanation || "No explanation provided.";
+
+             if (isCorrect) {
+                 feedbackStatusStrong.textContent = 'Correct!';
+                 feedbackStatusStrong.className = 'font-semibold block mb-1 text-green-700';
+                 if (!isRestoring) score++;
+             } else {
+                 feedbackStatusStrong.textContent = 'Incorrect.';
+                 feedbackStatusStrong.className = 'font-semibold block mb-1 text-red-700';
+             }
+             updateTopBar();
+             updateNavigation();
+         }
+
+         // --- Flashcard Functions ---
+        function loadFlashcard() {
+             if (currentQuestionIndex >= shuffledQuestions.length) {
+                 showFinalResults();
+                 return;
+             }
+             const q = shuffledQuestions[currentQuestionIndex];
+             flashcardQuestionP.textContent = q.question;
+             // Find the correct answer text using the index
+             const correctAnswerText = q.options[q.correctAnswer];
+             flashcardAnswerTextP.textContent = `Answer: ${correctAnswerText}`;
+             flashcardExplanationTextP.textContent = `Explanation: ${q.explanation || ''}`;
+
+             const card = flashcardModeDiv.querySelector('.flashcard');
+             if (card) card.classList.remove('flipped');
+
+             updateTopBar();
+             updateNavigation();
+         }
+
+        function flipCard(cardElement) {
+             if (cardElement) {
+                 cardElement.classList.toggle('flipped');
+             }
+         }
+
+         // --- Navigation & Results ---
+        function navigate(direction) {
+             if (direction === 1) {
+                 currentQuestionIndex++;
+                 if (currentMode === 'mcq') {
+                     loadMCQ();
+                 } else {
+                     loadFlashcard();
+                 }
+             }
+         }
+
+        function updateNavigation() {
+             if (currentQuestionIndex >= shuffledQuestions.length) {
+                  nextBtn.disabled = true;
+                  return;
+             }
+             // prevBtn logic if implemented
+
+             if (currentMode === 'mcq') {
+                 nextBtn.disabled = userAnswers[currentQuestionIndex] === null;
+             } else {
+                 nextBtn.disabled = false;
+             }
+
+             if (currentQuestionIndex === shuffledQuestions.length - 1) {
+                 nextBtn.textContent = 'Finish';
+             } else {
+                 nextBtn.textContent = 'Next';
+             }
+        }
+
+        function showFinalResults() {
+             hideAllViews();
+             resultsDisplayDiv.classList.remove('hidden');
+
+             let resultHTML = `<h2 class="text-xl font-bold text-gray-800 mb-4">Session Complete!</h2>`;
+             resultHTML += `<p class="text-gray-700 mb-2">Topic: Chlorobenzene</p>`;
+             if (currentMode === 'mcq') {
+                 resultHTML += `<p class="text-lg font-semibold mb-6">Your final score: ${score} out of ${shuffledQuestions.length}</p>`;
+             } else {
+                 resultHTML += `<p class="text-lg mb-6">You have reviewed all ${shuffledQuestions.length} flashcards.</p>`;
+             }
+             resultHTML += `<button onclick="resetToModeSelection()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg transition duration-150 ease-in-out">Start Over</button>`;
+
+             resultsDisplayDiv.innerHTML = resultHTML;
+        }
+
+        // --- Event Listeners (using inline onclick) ---
+        nextBtn.onclick = () => navigate(1);
+        // restartBtn.onclick = resetToModeSelection; // Handled inline
+
+        // --- Initial Load ---
+        // Show mode selection directly, hide other areas
+        contentAreaDiv.classList.add('hidden');
+        resultsDisplayDiv.classList.add('hidden');
+        modeSelectionDiv.classList.remove('hidden'); // Start here
+
+    </script>
+
+</body>
+</html>

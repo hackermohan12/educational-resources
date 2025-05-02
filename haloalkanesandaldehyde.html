@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Quiz & Flashcards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for flashcard flip */
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 0.5rem; /* rounded-lg */
+            background-color: white; /* bg-white */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* shadow-md */
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background-color: #f0f9ff; /* Light blue background for the back */
+        }
+        /* Basic styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        /* Style for selected MCQ option */
+        .selected-option {
+            border-color: #3b82f6; /* border-blue-500 */
+            background-color: #eff6ff; /* bg-blue-50 */
+        }
+        .correct-option {
+            border-color: #10b981 !important; /* border-green-500 */
+            background-color: #d1fae5 !important; /* bg-green-100 */
+        }
+        .incorrect-option {
+             border-color: #ef4444 !important; /* border-red-500 */
+             background-color: #fee2e2 !important; /* bg-red-100 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-2xl bg-white rounded-lg shadow-xl p-6 md:p-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-6">Chemistry Review</h1>
+        <h2 class="text-lg md:text-xl font-semibold text-center text-gray-600 mb-8">Haloalkanes, Aldehydes & Ketones</h2>
+
+        <div id="mode-selection" class="text-center mb-8">
+            <p class="text-gray-700 mb-4">Choose your study mode:</p>
+            <button onclick="selectMode('mcq')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mr-4 transition duration-150 ease-in-out">MCQ Quiz</button>
+            <button onclick="selectMode('flashcard')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition duration-150 ease-in-out">Flashcards</button>
+        </div>
+
+        <div id="content-area" class="hidden">
+
+            <div id="topic-indicator" class="text-center text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider"></div>
+
+            <div id="mcq-mode" class="hidden">
+                <div id="mcq-question" class="text-lg font-medium text-gray-800 mb-6 p-4 bg-blue-50 rounded-lg"></div>
+                <div id="mcq-options" class="space-y-3 mb-6">
+                    </div>
+                <div id="mcq-feedback" class="mt-4 p-4 rounded-lg text-sm hidden"></div>
+                <div id="mcq-explanation" class="mt-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-700 border border-gray-200 hidden">
+                    <strong class="font-semibold">Explanation:</strong> <span id="explanation-text"></span>
+                </div>
+            </div>
+
+            <div id="flashcard-mode" class="hidden">
+                 <div class="flashcard perspective h-64 md:h-80 mb-6 cursor-pointer" onclick="flipCard(this)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <p class="text-lg font-medium text-gray-800" id="flashcard-question"></p>
+                            <span class="text-xs text-gray-400 mt-4">(Click to flip)</span>
+                        </div>
+                        <div class="flashcard-back">
+                            <p class="text-base text-gray-700" id="flashcard-answer"></p>
+                        </div>
+                    </div>
+                </div>
+                 <p class="text-center text-sm text-gray-500">Click the card to reveal the answer.</p>
+            </div>
+
+            <div class="flex justify-between items-center mt-8">
+                <button id="prev-btn" onclick="navigate(-1)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-5 rounded-lg transition duration-150 ease-in-out disabled:opacity-50" disabled>Previous</button>
+                <span id="progress-indicator" class="text-sm text-gray-600"></span>
+                <button id="next-btn" onclick="navigate(1)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-5 rounded-lg transition duration-150 ease-in-out">Next</button>
+            </div>
+             <div class="text-center mt-6">
+                <button onclick="resetMode()" class="text-sm text-blue-600 hover:underline">Change Mode</button>
+            </div>
+        </div>
+         <div id="score-display" class="text-center mt-6 text-lg font-semibold text-gray-700 hidden"></div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const questions = [
+            // --- Haloalkanes ---
+            {
+                topic: "Haloalkanes",
+                question: "Which isomer of C3H7X generally has a lower boiling point?",
+                options: ["1-halopropane", "2-halopropane", "Both have the same boiling point", "Depends on the halogen (X)"],
+                correctAnswer: 1,
+                explanation: "2-halopropane has branching, which decreases the surface area for intermolecular van der Waals forces compared to the linear 1-halopropane, resulting in a lower boiling point."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "What is the major product when 1-halopropane reacts with alcoholic KCN?",
+                options: ["Propyl isocyanide", "Butane nitrile", "Propanenitrile", "Butyl isocyanide"],
+                correctAnswer: 1,
+                explanation: "KCN is predominantly ionic (K+ CN-). The cyanide ion (CN-) is an ambident nucleophile, but attack primarily occurs through carbon, leading to nitriles (R-CN). The carbon chain increases by one carbon, forming butane nitrile from 1-halopropane."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "An ambident nucleophile is one that:",
+                options: ["Only attacks electron-deficient centers.", "Has only one atom that can act as a nucleophilic site.", "Has more than one atom that can act as a nucleophilic site.", "Is always negatively charged."],
+                correctAnswer: 2,
+                explanation: "Ambident nucleophiles, like CN- or NO2-, possess two different nucleophilic centers, allowing them to attack from either site depending on reaction conditions."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "How can 2-bromopropane be prepared from propene according to the document?",
+                options: ["Reaction with HBr in the presence of peroxide", "Reaction with Br2 in UV light", "Reaction with HBr (following Markovnikov's rule)", "Reaction with NaBr in acetone"],
+                correctAnswer: 2,
+                explanation: "The addition of HBr to an unsymmetrical alkene like propene follows Markovnikov's rule in the absence of peroxides. The H+ adds to the carbon with more hydrogens (C1), and Br- adds to the carbon with fewer hydrogens (C2), yielding 2-bromopropane."
+            },
+             {
+                topic: "Haloalkanes",
+                question: "What is the product when 2-bromopropane is heated with sodium in dry ether?",
+                options: ["Propane", "Hexane", "2,3-dimethylbutane", "Propene"],
+                correctAnswer: 2,
+                explanation: "This is the Wurtz reaction. Two molecules of 2-bromopropane react with sodium to couple at the carbon atom where the bromine was attached, forming 2,3-dimethylbutane."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "In the preparation of chloroform from ethanol and bleaching powder, what is the intermediate aldehyde formed?",
+                options: ["Methanal", "Ethanal", "Propanal", "Butanal"],
+                correctAnswer: 1,
+                explanation: "Bleaching powder provides Ca(OH)2 and Cl2. Ethanol is first oxidized by Cl2 to Ethanal (acetaldehyde)."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Chloroform is stored in dark-colored bottles containing ethanol primarily to:",
+                options: ["Prevent reaction with the glass.", "Prevent its reduction to methane.", "Prevent its oxidation to poisonous phosgene gas.", "Enhance its anesthetic properties."],
+                correctAnswer: 2,
+                explanation: "Chloroform slowly oxidizes in air and light to form highly toxic phosgene (COCl2). Dark bottles prevent light exposure, and ethanol acts as a negative catalyst and reacts with any formed phosgene to produce harmless diethyl carbonate."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Why does pure chloroform *not* give a white precipitate with aqueous silver nitrate (AgNO3)?",
+                options: ["Chloroform is insoluble in water.", "Silver nitrate reacts with the ethanol stabilizer instead.", "The C-Cl bonds in chloroform are covalent and do not ionize easily.", "Chloroform is not a halogenated compound."],
+                correctAnswer: 2,
+                explanation: "AgNO3 test detects halide ions (like Cl-). In chloroform (CHCl3), the chlorine atoms are covalently bonded to carbon and do not readily ionize in solution to form Cl- ions needed to precipitate AgCl."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "What is the IUPAC name of the compound 'y' formed by the acidic hydrolysis of the product obtained when chloroethane ('x') reacts with KCN?",
+                options: ["Ethanoic acid", "Propanoic acid", "Butanoic acid", "Propanenitrile"],
+                correctAnswer: 1,
+                explanation: "Chloroethane reacts with KCN to form propanenitrile (CH3CH2CN). Complete acidic hydrolysis of a nitrile (R-CN) yields a carboxylic acid (R-COOH). Therefore, propanenitrile hydrolyzes to propanoic acid (CH3CH2COOH)."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "The reaction of chloroethane with sodium metal in dry ether is an example of:",
+                options: ["Grignard reaction", "Wurtz reaction", "Fittig reaction", "Friedel-Crafts reaction"],
+                correctAnswer: 1,
+                explanation: "The Wurtz reaction involves treating an alkyl halide with sodium metal in dry ether to form a higher alkane by coupling two alkyl groups. 2 CH3CH2Cl + 2 Na -> CH3CH2CH2CH3 + 2 NaCl."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Which compound generally has a higher boiling point: Chloroethane or Ethanol?",
+                options: ["Chloroethane", "Ethanol", "Both have similar boiling points", "Depends on pressure"],
+                correctAnswer: 1,
+                explanation: "Ethanol (CH3CH2OH) exhibits hydrogen bonding due to the -OH group, which is a strong intermolecular force. Chloroethane (CH3CH2Cl) has weaker dipole-dipole interactions. Stronger intermolecular forces require more energy to overcome, leading to a higher boiling point for ethanol."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "The Reimer-Tiemann reaction typically involves reacting phenol with chloroform in the presence of:",
+                options: ["Anhydrous AlCl3", "Aqueous NaOH or KOH", "Concentrated H2SO4", "Sodium metal in dry ether"],
+                correctAnswer: 1,
+                explanation: "The Reimer-Tiemann reaction introduces a formyl group (-CHO) onto a phenol ring using chloroform (CHCl3) and a strong aqueous base like NaOH or KOH."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "What is the product formed when chloroform is warmed with aniline and alcoholic KOH?",
+                options: ["Benzene", "Phenyl cyanide", "Phenyl isocyanide (Carbylamine reaction)", "Azobenzene"],
+                correctAnswer: 2,
+                explanation: "This is the Carbylamine reaction (or Isocyanide test), specific for primary amines. Chloroform reacts with a primary amine (aniline) in the presence of alcoholic KOH to form an isocyanide (phenyl isocyanide), which has a very unpleasant odor."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "What is the IUPAC name for Chloretone, formed from chloroform and acetone?",
+                options: ["1,1,1-Trichloro-2-propanol", "1,1-Dichloro-2-methyl-2-propanol", "1,1,1-Trichloro-2-methylpropan-2-ol", "Trichloromethyl methyl ketone"],
+                correctAnswer: 2,
+                explanation: "Chloretone is formed by the base-catalyzed reaction between chloroform (CHCl3) and acetone (CH3COCH3). The CCl3- anion attacks the carbonyl carbon of acetone, followed by protonation, yielding 1,1,1-Trichloro-2-methylpropan-2-ol."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Chloropicrin (CCl3NO2) is formed by the reaction of chloroform with:",
+                options: ["Dilute HNO3", "Concentrated HNO3", "KNO2", "AgNO2"],
+                correctAnswer: 1,
+                explanation: "Chloroform reacts with concentrated nitric acid (HNO3) in a reaction where the hydrogen of chloroform is replaced by a nitro group (-NO2), forming chloropicrin (trichloronitromethane)."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "What is the major product when ethyl chloride reacts with AgCN?",
+                options: ["Propane nitrile", "Ethyl cyanide", "Ethyl isocyanide", "Propyl isocyanide"],
+                correctAnswer: 2,
+                explanation: "AgCN is predominantly covalent. The nitrogen atom has a lone pair and acts as the nucleophilic site, attacking the alkyl halide carbon. This leads to the formation of isocyanides (R-NC). So, ethyl chloride yields ethyl isocyanide."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "The conversion of an alkyl halide to an ether using sodium alkoxide is known as:",
+                options: ["Wurtz Reaction", "Grignard Synthesis", "Williamson's Ether Synthesis", "Esterification"],
+                correctAnswer: 2,
+                explanation: "Williamson's ether synthesis involves the SN2 reaction between an alkyl halide (primary preferred) and a sodium alkoxide (R-O-Na+) to form an ether (R-O-R')."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Markovnikov's rule applies to the addition of HBr to:",
+                options: ["Symmetrical alkenes", "Unsymmetrical alkenes (in the absence of peroxides)", "Alkynes", "Alkanes"],
+                correctAnswer: 1,
+                explanation: "Markovnikov's rule states that in the addition of a protic acid (like HBr) to an unsymmetrical alkene, the acidic hydrogen attaches to the carbon atom of the double bond that already has more hydrogen atoms."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Anti-Markovnikov addition of HBr to propene occurs in the presence of:",
+                options: ["UV light", "Anhydrous AlCl3", "Peroxide", "Water"],
+                correctAnswer: 2,
+                explanation: "In the presence of peroxides, the addition of HBr to unsymmetrical alkenes proceeds via a free-radical mechanism, leading to the Anti-Markovnikov product (where Br attaches to the carbon with more hydrogens)."
+            },
+            {
+                topic: "Haloalkanes",
+                question: "Which reagent is used to convert ethanol to bromoethane as per the document?",
+                options: ["Br2/UV light", "NaBr(aq)", "HBr (generated from KBr + conc. H2SO4)", "PBr3"],
+                correctAnswer: 2,
+                explanation: "Reacting ethanol with HBr converts the -OH group to -Br. HBr can be generated in situ by reacting KBr with concentrated H2SO4."
+            },
+            // --- Aldehydes & Ketones ---
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Ozonolysis of which alkene gives ethanal and propanone as major products?",
+                options: ["Propene", "But-2-ene", "2-Methylbut-2-ene", "2-Methylpropene"],
+                correctAnswer: 2,
+                explanation: "Ozonolysis cleaves the double bond. Cleavage of the double bond in 2-Methylbut-2-ene ((CH3)2C=CHCH3) yields propanone ((CH3)2C=O) and ethanal (CH3CH=O)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Propanone (acetone) can be prepared by the oxidation/dehydrogenation of which alcohol?",
+                options: ["Propan-1-ol", "Propan-2-ol (Isopropyl alcohol)", "Ethanol", "Butan-2-ol"],
+                correctAnswer: 1,
+                explanation: "Oxidation (e.g., with KMnO4, K2Cr2O7, or dehydrogenation with Cu/300°C) of a secondary alcohol like propan-2-ol yields a ketone (propanone)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Hydration of propyne in the presence of H2SO4 and HgSO4 primarily yields:",
+                options: ["Propanal", "Propan-1-ol", "Propanone", "Propanoic acid"],
+                correctAnswer: 2,
+                explanation: "Hydration of alkynes (except acetylene) follows Markovnikov's rule, forming an enol intermediate which rapidly tautomerizes to the more stable keto form. Hydration of propyne gives propanone."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Hydrolysis of 2,2-dichloropropane with aqueous KOH yields:",
+                options: ["Propanal", "Propan-1-ol", "Propan-2-ol", "Propanone"],
+                correctAnswer: 3,
+                explanation: "Hydrolysis of a gem-dihalide (where both halogens are on the same carbon, not at the end of the chain) yields a ketone. An unstable gem-diol is formed initially, which loses water to form the ketone (propanone)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Rosenmund's reduction involves the conversion of an acyl chloride to an aldehyde using:",
+                options: ["H2/Ni", "LiAlH4", "H2/Pd-BaSO4", "NaBH4"],
+                correctAnswer: 2,
+                explanation: "Rosenmund's reduction is the catalytic hydrogenation of an acyl chloride using hydrogen gas over palladium catalyst poisoned with barium sulfate to stop the reduction at the aldehyde stage."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Ozonolysis of propene (CH3-CH=CH2) yields:",
+                options: ["Ethanal only", "Propanal only", "Ethanal and Methanal", "Propanone and Methanal"],
+                correctAnswer: 2,
+                explanation: "Ozonolysis cleaves the double bond in propene (CH3-CH=CH2) to yield ethanal (CH3CHO) and methanal (HCHO)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "How can ethanal be converted to propanone according to the reaction scheme shown?",
+                options: ["Reaction with HCN followed by hydrolysis", "Oxidation with K2Cr2O7/H+", "Reaction with CH3MgBr followed by oxidation", "Aldol condensation followed by heating"],
+                correctAnswer: 2,
+                explanation: "Ethanal (aldehyde) reacts with CH3MgBr (Grignard) to form propan-2-ol (secondary alcohol) after hydrolysis. Oxidation of propan-2-ol yields propanone (ketone)."
+             },
+             {
+                topic: "Aldehydes & Ketones",
+                question: "Reduction of propanone with H2/Ni yields:",
+                options: ["Propane", "Propan-1-ol", "Propan-2-ol", "Propene"],
+                correctAnswer: 2,
+                explanation: "Catalytic hydrogenation (H2/Ni, Pt, or Pd) reduces ketones to secondary alcohols. Propanone is reduced to propan-2-ol."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Reaction of propanone with HCN forms:",
+                options: ["2-Hydroxypropanoic acid", "2-Hydroxy-2-methylpropanenitrile", "Propanenitrile", "2-Methylpropan-2-ol"],
+                correctAnswer: 1,
+                explanation: "HCN adds across the carbonyl group of ketones (and aldehydes) to form cyanohydrins. Propanone yields 2-hydroxy-2-methylpropanenitrile (acetone cyanohydrin)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Propanone reacts with sodium bisulphite (NaHSO3) to form:",
+                options: ["A sodium salt of a sulphonic acid addition product", "Propan-2-ol", "Propane sulphonic acid", "No reaction"],
+                correctAnswer: 0,
+                explanation: "Most aldehydes and some ketones (like propanone) form crystalline addition products with sodium bisulphite. This reaction is often used for purification."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Reaction of propanone with a Grignard reagent (RMgX) followed by hydrolysis yields:",
+                options: ["A primary alcohol", "A secondary alcohol", "A tertiary alcohol", "An ether"],
+                correctAnswer: 2,
+                explanation: "Grignard reagents add to the carbonyl group. Reaction with ketones, followed by hydrolysis, yields tertiary alcohols."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "What is the product when propanone reacts with CH3MgI followed by hydrolysis?",
+                options: ["Butan-2-ol", "2-Methylpropan-1-ol", "2-Methylpropan-2-ol", "Butanone"],
+                correctAnswer: 2,
+                explanation: "Propanone (a ketone) reacts with methyl magnesium iodide (CH3MgI) followed by hydrolysis to yield the tertiary alcohol, 2-methylpropan-2-ol."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Hydrolysis of the cyanohydrin formed from propanone yields:",
+                options: ["Lactic acid", "2-Hydroxy-2-methylpropanoic acid", "Propanoic acid", "2-Methylpropanoic acid"],
+                correctAnswer: 1,
+                explanation: "The cyanohydrin from propanone is 2-hydroxy-2-methylpropanenitrile. Acidic hydrolysis of the nitrile group (-CN) converts it to a carboxylic acid group (-COOH), yielding 2-hydroxy-2-methylpropanoic acid."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "A carbonyl compound 'A' gives both Tollen's test and Iodoform test positively. 'A' is likely:",
+                options: ["Propanone", "Propanal", "Ethanal", "Methanal"],
+                correctAnswer: 2,
+                explanation: "Tollen's test is positive for aldehydes. The Iodoform test is positive for methyl ketones (CH3CO-) and alcohols that can be oxidized to methyl ketones (CH3CH(OH)-), and also for ethanal (CH3CHO). Ethanal fits both criteria."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "The reaction of ethanal with dilute NaOH is an example of:",
+                options: ["Cannizzaro reaction", "Aldol condensation", "Perkin reaction", "Clemmensen reduction"],
+                correctAnswer: 1,
+                explanation: "Aldehydes and ketones having at least one α-hydrogen atom undergo Aldol condensation in the presence of a dilute base (like NaOH) or acid. Ethanal has α-hydrogens."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "The product of the aldol condensation of ethanal is:",
+                options: ["But-2-enal", "3-Hydroxybutanal", "Propanal", "2-Hydroxypropanal"],
+                correctAnswer: 1,
+                explanation: "Two molecules of ethanal condense in the presence of dilute base to form 3-hydroxybutanal (an aldol - aldehyde + alcohol)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Reaction of ethanal with HCN followed by hydrolysis yields:",
+                options: ["Propanoic acid", "2-Hydroxypropanoic acid (Lactic acid)", "3-Hydroxypropanoic acid", "Ethanoic acid"],
+                correctAnswer: 1,
+                explanation: "Ethanal forms ethanal cyanohydrin with HCN. Hydrolysis of the nitrile group (-CN) in the cyanohydrin yields 2-hydroxypropanoic acid (Lactic acid)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "A carbonyl compound (M) used as a nail polish remover contains three carbon atoms and gives a positive iodoform test. (M) is:",
+                options: ["Propanal", "Propan-1-ol", "Propanone", "Propanoic acid"],
+                correctAnswer: 2,
+                explanation: "The common nail polish remover is acetone (propanone). It has three carbons and is a methyl ketone (CH3COCH3), so it gives a positive iodoform test."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Conversion of propanone to propane can be achieved using:",
+                options: ["H2/Ni", "LiAlH4", "NaBH4", "Zn(Hg)/conc. HCl (Clemmensen reduction)"],
+                correctAnswer: 3,
+                explanation: "Clemmensen reduction (using Zinc amalgam Zn(Hg) and concentrated HCl) reduces the carbonyl group (C=O) of aldehydes and ketones directly to a methylene group (CH2), converting propanone to propane."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Which of the following tests involves reaction with 2,4-dinitrophenylhydrazine (2,4-DNPH)?",
+                options: ["Tollen's test", "Fehling's test", "Iodoform test", "Brady's test (General test for carbonyl group)"],
+                correctAnswer: 3,
+                explanation: "Reaction with 2,4-DNPH (Brady's reagent) is a general test for the presence of a carbonyl group (C=O) in aldehydes and ketones, typically forming a yellow, orange, or red precipitate (a 2,4-dinitrophenylhydrazone)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "The functional isomer of propanone (CH3COCH3) is:",
+                options: ["Propan-1-ol", "Propanal", "Propanoic acid", "Methoxyethane"],
+                correctAnswer: 1,
+                explanation: "Functional isomers have the same molecular formula (C3H6O for both) but different functional groups. Propanone is a ketone, while propanal (CH3CH2CHO) is an aldehyde."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "An organic compound C3H6O does *not* give a silver mirror with Tollen's reagent but gives a yellow precipitate with NaOH and I2. The compound is:",
+                options: ["Propanal", "Propanone", "Cyclopropanol", "Prop-2-en-1-ol"],
+                correctAnswer: 1,
+                explanation: "No reaction with Tollen's reagent indicates it's not an aldehyde. A positive iodoform test (yellow ppt with NaOH/I2) indicates a methyl ketone. Propanone fits both criteria."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "The reaction of methanal with concentrated NaOH is an example of:",
+                options: ["Aldol condensation", "Cannizzaro reaction", "Wurtz reaction", "Perkin reaction"],
+                correctAnswer: 1,
+                explanation: "The Cannizzaro reaction is a disproportionation reaction undergone by aldehydes that *lack* α-hydrogen atoms (like methanal) in the presence of a concentrated base (like NaOH)."
+            },
+             {
+                topic: "Aldehydes & Ketones",
+                question: "The products of the Cannizzaro reaction of methanal are:",
+                options: ["Methanol and Sodium formate", "Ethanol and Sodium acetate", "Formic acid only", "Methanol only"],
+                correctAnswer: 0,
+                explanation: "In the Cannizzaro reaction, one molecule of the aldehyde is reduced to an alcohol (methanal -> methanol) and another is oxidized to the salt of a carboxylic acid (methanal -> sodium formate)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Which aldehyde gives a positive Iodoform test?",
+                options: ["Methanal", "Ethanal", "Propanal", "Benzaldehyde"],
+                correctAnswer: 1,
+                explanation: "Ethanal (CH3CHO) is the only aldehyde that gives a positive iodoform test because it possesses the required CH3C=O group structure (considering the H attached to the carbonyl)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Reaction of methanal with ammonia yields:",
+                options: ["Methanamine", "Formamide", "Hexamethylenetetraamine (Urotropine)", "Ammonium formate"],
+                correctAnswer: 2,
+                explanation: "Methanal (formaldehyde) reacts with ammonia to form Hexamethylenetetraamine ((CH2)6N4), also known as Urotropine."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Urotropine is used as a:",
+                options: ["Solvent", "Fuel", "Urinary antiseptic", "Reducing agent"],
+                correctAnswer: 2,
+                explanation: "Urotropine (Hexamethylenetetraamine) is used medically as a urinary antiseptic because it hydrolyzes in acidic urine to release formaldehyde, which has antibacterial properties."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "What happens when propanone reacts with PCl5?",
+                options: ["Propanoyl chloride", "1,1-Dichloropropane", "2,2-Dichloropropane", "Chloroacetone"],
+                correctAnswer: 2,
+                explanation: "Phosphorus pentachloride (PCl5) replaces the carbonyl oxygen (=O) of aldehydes and ketones with two chlorine atoms, forming gem-dichlorides. Propanone yields 2,2-dichloropropane."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Ethanal reacts with hydroxylamine (NH2OH) to form:",
+                options: ["Ethanamine", "Nitroethane", "Ethanal oxime (Acetaldoxime)", "Acetonitrile"],
+                correctAnswer: 2,
+                explanation: "Aldehydes and ketones react with hydroxylamine (a derivative of ammonia) to form oximes by eliminating a water molecule. Ethanal forms ethanal oxime (also called acetaldoxime)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Ethanal reacts with semicarbazide (NH2NHCONH2) to form:",
+                options: ["Ethanal hydrazone", "Ethanal semicarbazone", "Urea", "Formamide"],
+                correctAnswer: 1,
+                explanation: "Aldehydes and ketones react with semicarbazide (another ammonia derivative) to form semicarbazones by eliminating a water molecule. Ethanal forms ethanal semicarbazone."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Propanone reacts with hydrazine (NH2NH2) to form:",
+                options: ["Propanamine", "Propanone hydrazone (Acetone hydrazone)", "Propanone oxime", "Isopropyl amine"],
+                correctAnswer: 1,
+                explanation: "Aldehydes and ketones react with hydrazine to form hydrazones by eliminating a water molecule. Propanone forms propanone hydrazone."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Which reagent is used in Tollen's test?",
+                options: ["Ammoniacal silver nitrate solution", "Alkaline solution of copper(II) sulphate complexed with tartrate ions", "Iodine in sodium hydroxide solution", "2,4-dinitrophenylhydrazine"],
+                correctAnswer: 0,
+                explanation: "Tollen's reagent is a solution of ammoniacal silver nitrate [Ag(NH3)2]+OH-. It is used to test for aldehydes, which reduce the Ag+ ions to metallic silver, forming a silver mirror."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Fehling's test is given by:",
+                options: ["Ketones only", "Aromatic aldehydes", "Aliphatic aldehydes", "Alcohols"],
+                correctAnswer: 2,
+                explanation: "Fehling's solution (alkaline solution of copper(II) complexed with tartrate) is reduced by aliphatic aldehydes (but generally not aromatic aldehydes or ketones) to form a red precipitate of copper(I) oxide (Cu2O)."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "A positive 2,4-DNP test (Brady's test) typically results in the formation of a:",
+                options: ["Silver mirror", "Red precipitate", "Yellow/Orange/Red precipitate", "Colorless solution"],
+                correctAnswer: 2,
+                explanation: "Aldehydes and ketones react with 2,4-dinitrophenylhydrazine (Brady's reagent) to form 2,4-dinitrophenylhydrazones, which are usually brightly colored (yellow, orange, or red) solid precipitates."
+            },
+            {
+                topic: "Aldehydes & Ketones",
+                question: "Clemmensen reduction uses which reagents to convert a carbonyl group (C=O) to a methylene group (CH2)?",
+                options: ["H2/Ni", "LiAlH4", "Zn(Hg) / conc. HCl", "NaBH4"],
+                correctAnswer: 2,
+                explanation: "Clemmensen reduction specifically uses zinc amalgam (Zn(Hg)) and concentrated hydrochloric acid (HCl) to reduce the carbonyl group of aldehydes or ketones to a CH2 group."
+            }
+        ];
+
+        // --- State ---
+        let currentMode = null; // 'mcq' or 'flashcard'
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null); // Store user choice index for MCQs
+
+        // --- Elements ---
+        const modeSelectionDiv = document.getElementById('mode-selection');
+        const contentAreaDiv = document.getElementById('content-area');
+        const mcqModeDiv = document.getElementById('mcq-mode');
+        const flashcardModeDiv = document.getElementById('flashcard-mode');
+        const mcqQuestionDiv = document.getElementById('mcq-question');
+        const mcqOptionsDiv = document.getElementById('mcq-options');
+        const mcqFeedbackDiv = document.getElementById('mcq-feedback');
+        const mcqExplanationDiv = document.getElementById('mcq-explanation');
+        const explanationTextSpan = document.getElementById('explanation-text');
+        const flashcardQuestionP = document.getElementById('flashcard-question');
+        const flashcardAnswerP = document.getElementById('flashcard-answer');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressIndicatorSpan = document.getElementById('progress-indicator');
+        const topicIndicatorDiv = document.getElementById('topic-indicator');
+        const scoreDisplayDiv = document.getElementById('score-display');
+
+
+        // --- Functions ---
+
+        function selectMode(mode) {
+            currentMode = mode;
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null); // Reset answers when changing mode
+            modeSelectionDiv.classList.add('hidden');
+            contentAreaDiv.classList.remove('hidden');
+            scoreDisplayDiv.classList.add('hidden'); // Hide score initially
+
+            if (mode === 'mcq') {
+                mcqModeDiv.classList.remove('hidden');
+                flashcardModeDiv.classList.add('hidden');
+                loadMCQ();
+            } else {
+                mcqModeDiv.classList.add('hidden');
+                flashcardModeDiv.classList.remove('hidden');
+                loadFlashcard();
+            }
+            updateNavigation();
+        }
+
+        function resetMode() {
+             currentMode = null;
+             modeSelectionDiv.classList.remove('hidden');
+             contentAreaDiv.classList.add('hidden');
+             mcqModeDiv.classList.add('hidden');
+             flashcardModeDiv.classList.add('hidden');
+             scoreDisplayDiv.classList.add('hidden');
+        }
+
+        function loadMCQ() {
+            const q = questions[currentQuestionIndex];
+            mcqQuestionDiv.textContent = `${currentQuestionIndex + 1}. ${q.question}`;
+            topicIndicatorDiv.textContent = `Topic: ${q.topic}`;
+            mcqOptionsDiv.innerHTML = ''; // Clear previous options
+            mcqFeedbackDiv.classList.add('hidden');
+            mcqExplanationDiv.classList.add('hidden');
+
+            q.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('block', 'w-full', 'text-left', 'p-3', 'border', 'border-gray-300', 'rounded-lg', 'hover:bg-gray-100', 'transition', 'duration-150', 'ease-in-out');
+                button.onclick = () => selectAnswer(index);
+                mcqOptionsDiv.appendChild(button);
+            });
+
+             // Restore previous selection if exists and show feedback
+            if (userAnswers[currentQuestionIndex] !== null) {
+                showMCQFeedback(userAnswers[currentQuestionIndex]);
+            }
+        }
+
+        function selectAnswer(selectedIndex) {
+             // Prevent re-answering
+            if (userAnswers[currentQuestionIndex] !== null) return;
+
+            userAnswers[currentQuestionIndex] = selectedIndex; // Store the user's choice
+            showMCQFeedback(selectedIndex);
+        }
+
+        function showMCQFeedback(selectedIndex) {
+            const q = questions[currentQuestionIndex];
+            const buttons = mcqOptionsDiv.querySelectorAll('button');
+            const isCorrect = selectedIndex === q.correctAnswer;
+
+            // Disable all buttons after selection
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Style selected button
+            buttons[selectedIndex].classList.add('selected-option');
+
+            // Show feedback message
+            mcqFeedbackDiv.classList.remove('hidden');
+            if (isCorrect) {
+                mcqFeedbackDiv.textContent = 'Correct!';
+                mcqFeedbackDiv.className = 'mt-4 p-4 rounded-lg text-sm text-green-800 bg-green-100 border border-green-200';
+                buttons[selectedIndex].classList.add('correct-option');
+                score++; // Increment score only on first correct answer
+            } else {
+                mcqFeedbackDiv.textContent = `Incorrect. The correct answer was: ${q.options[q.correctAnswer]}`;
+                mcqFeedbackDiv.className = 'mt-4 p-4 rounded-lg text-sm text-red-800 bg-red-100 border border-red-200';
+                buttons[selectedIndex].classList.add('incorrect-option');
+                // Highlight the correct answer as well
+                 buttons[q.correctAnswer].classList.add('correct-option');
+            }
+
+            // Show explanation
+            explanationTextSpan.textContent = q.explanation;
+            mcqExplanationDiv.classList.remove('hidden');
+
+            updateNavigation(); // Enable next button maybe
+        }
+
+
+        function loadFlashcard() {
+            const q = questions[currentQuestionIndex];
+            flashcardQuestionP.textContent = q.question;
+            flashcardAnswerP.textContent = q.explanation; // Use explanation as the answer
+            topicIndicatorDiv.textContent = `Topic: ${q.topic}`;
+
+            // Reset flip state
+            const card = flashcardModeDiv.querySelector('.flashcard');
+            if (card.classList.contains('flipped')) {
+                card.classList.remove('flipped');
+            }
+        }
+
+        function flipCard(cardElement) {
+            cardElement.classList.toggle('flipped');
+        }
+
+        function navigate(direction) {
+            const newIndex = currentQuestionIndex + direction;
+            if (newIndex >= 0 && newIndex < questions.length) {
+                currentQuestionIndex = newIndex;
+                if (currentMode === 'mcq') {
+                    loadMCQ();
+                } else {
+                    loadFlashcard();
+                }
+                updateNavigation();
+            }
+
+            // Show score at the end of MCQ quiz
+            if (currentMode === 'mcq' && currentQuestionIndex === questions.length - 1 && userAnswers[currentQuestionIndex] !== null) {
+                 showFinalScore();
+            } else if (currentMode === 'mcq' && direction === 1 && currentQuestionIndex === questions.length) {
+                 // Handle case where user clicks next on the last question
+                 showFinalScore();
+            } else {
+                 scoreDisplayDiv.classList.add('hidden');
+            }
+
+        }
+
+        function showFinalScore() {
+            scoreDisplayDiv.textContent = `Quiz Complete! Your Score: ${score} / ${questions.length}`;
+            scoreDisplayDiv.classList.remove('hidden');
+            nextBtn.disabled = true; // Disable next at the very end
+        }
+
+
+        function updateNavigation() {
+            progressIndicatorSpan.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            prevBtn.disabled = currentQuestionIndex === 0;
+
+            // In MCQ mode, only enable 'Next' if the current question has been answered,
+            // unless it's the very last question (where it should be disabled after answering).
+            if (currentMode === 'mcq') {
+                 if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Disable if last question not answered
+                 } else {
+                    nextBtn.disabled = userAnswers[currentQuestionIndex] === null; // Disable if current not answered
+                 }
+
+                 // If showing final score, disable next
+                 if (!scoreDisplayDiv.classList.contains('hidden')) {
+                     nextBtn.disabled = true;
+                 }
+
+            } else {
+                 // In flashcard mode, 'Next' is disabled only at the last card.
+                 nextBtn.disabled = currentQuestionIndex === questions.length - 1;
+            }
+        }
+
+    </script>
+
+</body>
+</html>
