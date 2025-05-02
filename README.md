@@ -1,6 +1,5 @@
 # Mohan Paudel's Educational Resources
 
-![Educational Resources](https://via.placeholder.com/800x400.png?text=Mohan+Paudel+Educational+Resources)
 
 ## 📚 Overview
 
