@@ -78,7 +78,7 @@ Visit the live version of the website: [Mohan Paudel's Educational Resources](ht
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mohanpaudel/educational-resources.git
+   git clone https://github.com/hackermohan12/educational-resources.git
    ```
 
 2. Navigate to the project directory:
