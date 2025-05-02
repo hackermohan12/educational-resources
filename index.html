@@ -1,178 +1,802 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>English Quiz</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f0f2f5;
-      color: #333;
-    }
-
-    header {
-      background: linear-gradient(135deg, #007bff, #0056b3);
-      color: white;
-      text-align: center;
-      padding: 60px 20px;
-      animation: fadeInDown 1s ease-out;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 3rem;
-    }
-
-    header p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-    }
-
-    .main {
-      text-align: center;
-      padding: 60px 20px;
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    .main button {
-      padding: 15px 35px;
-      font-size: 1.2rem;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.2s, background-color 0.3s;
-    }
-
-    .main button:hover {
-      background-color: #218838;
-      transform: scale(1.05);
-    }
-
-    .about {
-      background: white;
-      padding: 60px 20px;
-      text-align: center;
-      animation: fadeIn 2s ease-in;
-    }
-
-    .about h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #007bff;
-    }
-
-    .about p {
-      max-width: 700px;
-      margin: auto;
-      font-size: 1.1rem;
-      line-height: 1.6;
-    }
-
-    footer {
-      background-color: #343a40;
-      color: white;
-      text-align: center;
-      padding: 15px 10px;
-      font-size: 0.9rem;
-    }
-
-    #scrollTopBtn {
-      display: none;
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      z-index: 99;
-      font-size: 18px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      padding: 12px 16px;
-      cursor: pointer;
-    }
-
-    #scrollTopBtn:hover {
-      background: #0056b3;
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 2rem;
-      }
-
-      .main button {
-        width: 80%;
-        font-size: 1rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohan Paudel's Collection</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 1;
+        }
+        
+        nav {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            list-style: none;
+            gap: 1rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .card-icon {
+            background-color: var(--primary-color);
+            width: 100%;
+            height: 160px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .card p {
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        
+        .card-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .card-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .about-section {
+            background-color: white;
+            padding: 3rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+        }
+        
+        .about-section h2 {
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            background-color: #e0e0e0;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .about-text {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .about-text p {
+            margin-bottom: 1rem;
+        }
+        
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .skill-tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .thanks-section {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+        
+        .thanks-section h2 {
+            margin-bottom: 1rem;
+        }
+        
+        .thanks-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        
+        footer p {
+            margin-bottom: 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .social-link {
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+        
+        .back-to-top.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 90%;
+            width: 800px;
+            position: relative;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .close:hover {
+            color: var(--accent-color);
+        }
+        
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-footer {
+            text-align: right;
+        }
+        
+        .modal-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .modal-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header-content p {
+                font-size: 1rem;
+            }
+            
+            .about-section {
+                padding: 2rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .card {
+                min-height: auto;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        .delay-5 { animation-delay: 1s; }
+    </style>
 </head>
 <body>
+    <header>
+        <div class="header-bg"></div>
+        <div class="header-content">
+            <h1>Mohan Paudel</h1>
+            <p>Welcome to my collection of educational resources</p>
+        </div>
+    </header>
 
-  <header>
-    <h1>English Quiz</h1>
-    <p>Challenge yourself. Learn better. Play smarter.</p>
-  </header>
+    <nav>
+        <ul>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#about">About Me</a></li>
+            <li><a href="#thanks">Special Thanks</a></li>
+        </ul>
+    </nav>
 
-  <section class="main">
-    <p style="font-size: 1.1rem; margin-bottom: 30px;">
-      Welcome! Test your grammar, vocabulary, and comprehension skills. Ready to play?
-    </p>
-    <button onclick="location.href='Quiz.html'">Start Quiz</button>
-  </section>
-
-  <section class="about">
-    <h2>About Us</h2>
-    <p>
-      We are a team of language enthusiasts and educators who believe learning should be interactive and fun.
-      Our English Quiz platform helps you sharpen your skills in a playful environment—anytime, anywhere.
-    </p>
-  </section>
-
-  <footer>
-    Made with ❤️ by Mohan Paudel &nbsp; | &nbsp; © 2025 English Quiz
-  </footer>
-
-  <button onclick="topFunction()" id="scrollTopBtn" title="Go to top">↑</button>
-
-  <script>
-    // Show scroll-to-top button
-    const scrollBtn = document.getElementById("scrollTopBtn");
-    window.onscroll = function () {
-      if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-        scrollBtn.style.display = "block";
-      } else {
-        scrollBtn.style.display = "none";
-      }
-    };
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
-  </script>
+    <main>
+        <section id="resources" class="animate delay-1">
+            <h2 style="text-align: center; margin-bottom: 2rem;">My Educational Resources</h2>
+            <div class="grid-container">
+                <div class="card animate delay-1">
+                    <div class="card-icon" style="background-color: #3498db;">
+                        <i>📖</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Story</h3>
+                        <p>Collection of creative stories for reading and learning.</p>
+                        <a href="story.html" class="card-btn">Read Stories</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-1">
+                    <div class="card-icon" style="background-color: #9b59b6;">
+                        <i>🎭</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Poetry</h3>
+                        <p>Beautiful poems that inspire and evoke emotions.</p>
+                        <a href="poem.html" class="card-btn">Read Poems</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-2">
+                    <div class="card-icon" style="background-color: #e74c3c;">
+                        <i>🎬</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>One Act Play</h3>
+                        <p>Short theatrical plays for performance and study.</p>
+                        <a href="oneactplay.html" class="card-btn">View Plays</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-2">
+                    <div class="card-icon" style="background-color: #e67e22;">
+                        <i>📝</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Essays</h3>
+                        <p>Thoughtful essays on various topics and subjects.</p>
+                        <a href="Essay.html" class="card-btn">Read Essays</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-3">
+                    <div class="card-icon" style="background-color: #27ae60;">
+                        <i>🌏</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>नेपाली</h3>
+                        <p>Nepali language resources and learning materials.</p>
+                        <a href="nepali.html" class="card-btn">View Nepali</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-3">
+                    <div class="card-icon" style="background-color: #f1c40f;">
+                        <i>🔤</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Prepositions</h3>
+                        <p>Learn about English prepositions and their usage.</p>
+                        <a href="preposition.html" class="card-btn">Learn Prepositions</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-4">
+                    <div class="card-icon" style="background-color: #1abc9c;">
+                        <i>🧪</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Carboxylic Acids</h3>
+                        <p>Chemistry resources on carboxylic acid compounds.</p>
+                        <a href="carboxylic.html" class="card-btn">Study Chemistry</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-4">
+                    <div class="card-icon" style="background-color: #34495e;">
+                        <i>⚗️</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Haloalkanes & Aldehydes</h3>
+                        <p>Chemistry lessons on haloalkanes and aldehydes.</p>
+                        <a href="haloalkanesandaldehyde.html" class="card-btn">Study Chemistry</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-5">
+                    <div class="card-icon" style="background-color: #2c3e50;">
+                        <i>🔬</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Haloarenes</h3>
+                        <p>Chemistry resources on haloarene compounds.</p>
+                        <a href="haloarenes.html" class="card-btn">Study Chemistry</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-5">
+                    <div class="card-icon" style="background-color: #16a085;">
+                        <i>🧫</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Nitro & Ether</h3>
+                        <p>Chemistry lessons on nitro compounds and ethers.</p>
+                        <a href="nitroether.html" class="card-btn">Study Chemistry</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-5">
+                    <div class="card-icon" style="background-color: #8e44ad;">
+                        <i>🧪</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Phenol</h3>
+                        <p>Chemistry resources on phenolic compounds.</p>
+                        <a href="phenol.html" class="card-btn">Study Chemistry</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-5">
+                    <div class="card-icon" style="background-color: #d35400;">
+                        <i>📊</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Grammar</h3>
+                        <p>English grammar rules and explanations.</p>
+                        <a href="grammar.html" class="card-btn">Learn Grammar</a>
+                    </div>
+                </div>
+                
+                <div class="card animate delay-5">
+                    <div class="card-icon" style="background-color: #c0392b;">
+                        <i>✅</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Grammar Quiz</h3>
+                        <p>Test your English grammar knowledge with quizzes.</p>
+                        <a href="Quiz.html" class="card-btn">Take Quiz</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="about" class="about-section animate delay-2">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <div class="about-image">
+                    <svg width="300" height="300" viewBox="0 0 300 300">
+                        <circle cx="150" cy="120" r="70" fill="#3498db" />
+                        <circle cx="150" cy="105" r="20" fill="#ecf0f1" />
+                        <path d="M150,190 C194,190 230,230 240,280 L60,280 C70,230 106,190 150,190 Z" fill="#3498db" />
+                    </svg>
+                </div>
+                <div class="about-text">
+                    <h3>Mohan Paudel</h3>
+                    <p>I am an educator passionate about creating accessible learning resources. My collection covers a wide range of subjects from literature to chemistry and language studies.</p>
+                    <p>With a focus on creating engaging educational content, I've developed materials that help students understand complex topics through clear explanations and practical examples.</p>
+                    <h4>Areas of Expertise:</h4>
+                    <div class="skills">
+                        <span class="skill-tag">Chemistry</span>
+                        <span class="skill-tag">English Grammar</span>
+                        <span class="skill-tag">Nepali Language</span>
+                        <span class="skill-tag">Literature</span>
+                        <span class="skill-tag">Creative Writing</span>
+                        <span class="skill-tag">Education</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="thanks" class="thanks-section animate delay-3">
+            <div class="thanks-content">
+                <h2>Special Thanks</h2>
+                <p>I would like to express my sincere gratitude to <strong>Rupesh</strong> for his invaluable support, guidance, and collaboration throughout this journey. His expertise and encouragement have been instrumental in bringing these educational resources to life.</p>
+                <p>Thank you, Rupesh, for believing in this project and helping make it a reality!</p>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Mohan Paudel. All rights reserved.</p>
+        <div class="social-links">
+            <a href="#" class="social-link" onclick="showModal('contact')">📧</a>
+            <a href="#" class="social-link">📱</a>
+            <a href="#" class="social-link">📘</a>
+            <a href="#" class="social-link">🐦</a>
+        </div>
+        <p>A collection of educational resources for learning and growth.</p>
+    </footer>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <!-- Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('contact')">&times;</span>
+            <div class="modal-header">
+                <h2>Contact Me</h2>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for your interest in getting in touch. You can reach me through the following methods:</p>
+                <p><strong>Email:</strong> mohan.paudel@example.com</p>
+                <p><strong>Phone:</strong> +977 98XXXXXXXX</p>
+                <p>I typically respond to all inquiries within 24-48 hours. Looking forward to hearing from you!</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" onclick="closeModal('contact')">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Back to top button
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.classList.add('active');
+            } else {
+                backToTopBtn.classList.remove('active');
+            }
+        });
+        
+        backToTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Modal functionality
+        function showModal(type) {
+            document.getElementById(type + 'Modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(type) {
+            document.getElementById(type + 'Modal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside of it
+        window.addEventListener('click', (e) => {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+        
+        // Apply intersection observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        document.querySelectorAll('.animate').forEach(element => {
+            element.style.opacity = 0;
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(element);
+        });
+        
+        // Add dynamic particles to header background
+        const headerBg = document.querySelector('.header-bg');
+        
+        function createParticles() {
+            headerBg.innerHTML = '';
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 10 + 5 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = `float ${Math.random() * 10 + 5}s linear infinite`;
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                headerBg.appendChild(particle);
+            }
+        }
+        
+        // Add floating animation
+        const styleSheet = document.createElement('style');
+        styleSheet.innerHTML = `
+            @keyframes float {
+                0% {
+                    transform: translateY(0) translateX(0);
+                }
+                25% {
+                    transform: translateY(-10px) translateX(10px);
+                }
+                50% {
+                    transform: translateY(0) translateX(20px);
+                }
+                75% {
+                    transform: translateY(10px) translateX(10px);
+                }
+                100% {
+                    transform: translateY(0) translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+        
+        createParticles();
+        
+        // Add hover effects to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseover', () => {
+                card.style.transform = 'translateY(-15px)';
+                card.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
+            });
+            
+            card.addEventListener('mouseout', () => {
+                card.style.transform = 'translateY(-10px)';
+                card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)';
+            });
+        });
+    </script>
 </body>
 </html>
