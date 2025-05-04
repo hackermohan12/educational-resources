@@ -3,66 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Mohan Paudel's collection of educational resources covering literature, chemistry, grammar, and Nepali language learning materials.">
-    <meta name="keywords" content="educational resources, chemistry lessons, English grammar, Nepali language, literature, poems, stories, essays, carboxylic acids, haloarenes, phenol, prepositions">
+    <meta name="description" content="Mohan Paudel's collection of educational resources covering literature, chemistry, grammar, computer science, and Nepali language learning materials.">
+    <meta name="keywords" content="educational resources, chemistry lessons, English grammar, Nepali language, literature, poems, stories, essays, carboxylic acids, haloarenes, phenol, prepositions, computer science, quiz">
     <meta name="author" content="Mohan Paudel">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://mohanpaudel.com/">
+    <meta property="og:url" content="https://paudelmohan.com.np/">
     <meta property="og:title" content="Mohan Paudel's Educational Resources">
-    <meta property="og:description" content="A comprehensive collection of educational materials for literature, chemistry, grammar, and Nepali language learning.">
-    <meta property="og:image" content="https://mohanpaudel.com/images/og-image.jpg">
+    <meta property="og:description" content="A comprehensive collection of educational materials for literature, chemistry, computer science, grammar, and Nepali language learning.">
+    <meta property="og:image" content="https://paudelmohan.com.np/images/og-image.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://mohanpaudel.com/">
+    <meta property="twitter:url" content="https://paudelmohan.com.np/">
     <meta property="twitter:title" content="Mohan Paudel's Educational Resources">
-    <meta property="twitter:description" content="A comprehensive collection of educational materials for literature, chemistry, grammar, and Nepali language learning.">
-    <meta property="twitter:image" content="https://mohanpaudel.com/images/twitter-image.jpg">
+    <meta property="twitter:description" content="A comprehensive collection of educational materials for literature, chemistry, computer science, grammar, and Nepali language learning.">
+    <meta property="twitter:image" content="https://paudelmohan.com.np/images/twitter-image.jpg">
     
     <!-- Theme Color for Browser -->
-    <meta name="theme-color" content="#3498db">
+    <meta name="theme-color" content="#6366f1">
     
     <!-- Canonical URL -->
-    <meta rel="canonical" href="https://mohanpaudel.com/">
+    <meta rel="canonical" href="https://paudelmohan.com.np/">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
-    <title>Mohan Paudel's Collection</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>Mohan Paudel's Educational Resources</title>
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #334155;
+            --accent-color: #f43f5e;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --transition: all 0.3s ease;
+            --border-radius: 0.75rem;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background-color: #f5f7fa;
+            background-color: #f8fafc;
             color: var(--dark-color);
             line-height: 1.6;
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 4rem 1rem;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-lg);
         }
         
         .header-content {
@@ -71,15 +80,18 @@
         }
         
         .header-content h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            letter-spacing: -0.025em;
         }
         
         .header-content p {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             max-width: 800px;
             margin: 0 auto;
+            opacity: 0.9;
         }
         
         .header-bg {
@@ -88,7 +100,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.1;
+            opacity: 0.15;
             z-index: 1;
         }
         
@@ -106,16 +118,21 @@
             justify-content: center;
             flex-wrap: wrap;
             list-style: none;
-            gap: 1rem;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         nav a {
             color: white;
             text-decoration: none;
             padding: 0.5rem 1rem;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             transition: var(--transition);
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         nav a:hover {
@@ -125,101 +142,167 @@
         
         main {
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
         }
         
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
         
         .card {
             background-color: white;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--shadow);
             transition: var(--transition);
             position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
         }
         
         .card-content {
             padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .card-icon {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             width: 100%;
             height: 160px;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            font-size: 3rem;
+            font-size: 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-icon::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            top: -25%;
+            left: -25%;
         }
         
         .card h3 {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             color: var(--secondary-color);
+            font-size: 1.5rem;
+            font-weight: 600;
         }
         
         .card p {
-            color: #555;
-            margin-bottom: 1rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
         
         .card-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             background-color: var(--primary-color);
             color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--border-radius);
             text-decoration: none;
             transition: var(--transition);
+            font-weight: 500;
+            align-self: flex-start;
         }
         
         .card-btn:hover {
-            background-color: #2980b9;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .featured-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            right: -2rem;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.25rem 2rem;
+            transform: rotate(45deg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .about-section {
             background-color: white;
             padding: 3rem;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
         }
         
         .about-section h2 {
             color: var(--secondary-color);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: center;
         }
         
         .about-content {
             display: flex;
             flex-wrap: wrap;
-            gap: 2rem;
+            gap: 2.5rem;
             align-items: center;
         }
         
         .about-image {
             flex: 1;
             min-width: 300px;
-            background-color: #e0e0e0;
+            background-color: #f1f5f9;
             height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             overflow: hidden;
+            box-shadow: var(--shadow);
         }
         
         .about-text {
@@ -227,65 +310,116 @@
             min-width: 300px;
         }
         
-        .about-text p {
+        .about-text h3 {
+            color: var(--primary-color);
             margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+        
+        .about-text p {
+            margin-bottom: 1.25rem;
+            color: #475569;
         }
         
         .skills {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
         }
         
         .skill-tag {
             background-color: var(--primary-color);
             color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         
         .thanks-section {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            padding: 2rem;
+            background: linear-gradient(135deg, var(--accent-color), #e11d48);
+            padding: 3rem;
             color: white;
             text-align: center;
-            border-radius: 8px;
-            margin-bottom: 3rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 4rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .thanks-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
         }
         
         .thanks-section h2 {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            position: relative;
         }
         
         .thanks-content {
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .thanks-content p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
         }
         
         footer {
             background-color: var(--secondary-color);
             color: white;
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 3rem 1rem;
+            position: relative;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
         
         footer p {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            opacity: 0.9;
         }
         
         .social-links {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
         }
         
         .social-link {
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.1);
             display: flex;
@@ -293,6 +427,7 @@
             justify-content: center;
             text-decoration: none;
             transition: var(--transition);
+            font-size: 1.25rem;
         }
         
         .social-link:hover {
@@ -313,15 +448,21 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
             opacity: 0;
             transition: var(--transition);
             pointer-events: none;
+            z-index: 99;
         }
         
         .back-to-top.active {
             opacity: 1;
             pointer-events: auto;
+        }
+        
+        .back-to-top:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-5px);
         }
         
         /* Modal styles */
@@ -337,6 +478,7 @@
             background-color: rgba(0, 0, 0, 0.8);
             opacity: 0;
             transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
         }
         
         .modal.show {
@@ -347,15 +489,16 @@
         }
         
         .modal-content {
-            background-color: #fefefe;
+            background-color: #ffffff;
             margin: auto;
-            padding: 2rem;
-            border-radius: 8px;
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
             max-width: 90%;
-            width: 800px;
+            width: 600px;
             position: relative;
             transform: scale(0.8);
             transition: transform 0.3s ease;
+            box-shadow: var(--shadow-lg);
         }
         
         .modal.show .modal-content {
@@ -366,41 +509,64 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            color: #aaa;
+            color: #94a3b8;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
             transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
         
         .close:hover {
             color: var(--accent-color);
+            background-color: #f1f5f9;
         }
         
         .modal-header {
             margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1rem;
+        }
+        
+        .modal-header h2 {
+            color: var(--primary-color);
         }
         
         .modal-body {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-body p {
+            margin-bottom: 1rem;
+            color: #475569;
         }
         
         .modal-footer {
             text-align: right;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
         }
         
         .modal-btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
             cursor: pointer;
             transition: var(--transition);
+            font-weight: 500;
+            font-size: 1rem;
         }
         
         .modal-btn:hover {
-            background-color: #2980b9;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
         }
         
         /* Responsive styles */
@@ -421,6 +587,10 @@
                 width: 95%;
                 padding: 1.5rem;
             }
+            
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
         }
         
         @media (max-width: 480px) {
@@ -433,8 +603,12 @@
                 align-items: center;
             }
             
-            .card {
-                min-height: auto;
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .thanks-section {
+                padding: 2rem;
             }
         }
         
@@ -445,6 +619,7 @@
         }
         
         .animate {
+            opacity: 0;
             animation: fadeIn 0.8s ease forwards;
         }
         
@@ -453,6 +628,26 @@
         .delay-3 { animation-delay: 0.6s; }
         .delay-4 { animation-delay: 0.8s; }
         .delay-5 { animation-delay: 1s; }
+        
+        /* Pulse animation for featured badge */
+        @keyframes pulse {
+            0% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(45deg) scale(1.05); }
+            100% { transform: rotate(45deg) scale(1); }
+        }
+        
+        .featured-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Card hover effect */
+        .card-icon i {
+            transition: transform 0.5s ease;
+        }
+        
+        .card:hover .card-icon i {
+            transform: scale(1.2);
+        }
     </style>
 </head>
 <body>
@@ -466,178 +661,200 @@
 
     <nav>
         <ul>
-            <li><a href="#resources">Resources</a></li>
-            <li><a href="#about">About Me</a></li>
-            <li><a href="#thanks">Special Thanks</a></li>
+            <li><a href="#resources">📚 Resources</a></li>
+            <li><a href="#about">👨‍🏫 About Me</a></li>
+            <li><a href="#thanks">🙏 Special Thanks</a></li>
         </ul>
     </nav>
 
     <main>
         <section id="resources" class="animate delay-1">
-            <h2 style="text-align: center; margin-bottom: 2rem;">My Educational Resources</h2>
+            <h2 class="section-title">My Educational Resources</h2>
             <div class="grid-container">
+                <!-- New Computer Science Quiz Card with Featured Badge -->
+                <div class="card animate delay-1 featured-card">
+                    <div class="featured-badge">NEW</div>
+                    <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #6366f1);">
+                        <i>💻</i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Computer Science Quiz</h3>
+                        <p>Interactive quiz covering Class 12 Computer Science curriculum with multiple topics and difficulty levels.</p>
+                        <a href="computer.html" class="card-btn">Take Quiz →</a>
+                    </div>
+                </div>
+                
                 <div class="card animate delay-1">
-                    <div class="card-icon" style="background-color: #3498db;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
                         <i>📖</i>
                     </div>
                     <div class="card-content">
                         <h3>Story</h3>
                         <p>Collection of creative stories for reading and learning.</p>
-                        <a href="story.html" class="card-btn">Read Stories</a>
+                        <a href="story.html" class="card-btn">Read Stories →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-1">
-                    <div class="card-icon" style="background-color: #9b59b6;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
                         <i>🎭</i>
                     </div>
                     <div class="card-content">
                         <h3>Poetry</h3>
                         <p>Beautiful poems that inspire and evoke emotions.</p>
-                        <a href="poem.html" class="card-btn">Read Poems</a>
+                        <a href="poem.html" class="card-btn">Read Poems →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-2">
-                    <div class="card-icon" style="background-color: #e74c3c;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
                         <i>🎬</i>
                     </div>
                     <div class="card-content">
                         <h3>One Act Play</h3>
                         <p>Short theatrical plays for performance and study.</p>
-                        <a href="oneactplay.html" class="card-btn">View Plays</a>
+                        <a href="oneactplay.html" class="card-btn">View Plays →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-2">
-                    <div class="card-icon" style="background-color: #e67e22;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">
                         <i>📝</i>
                     </div>
                     <div class="card-content">
                         <h3>Essays</h3>
                         <p>Thoughtful essays on various topics and subjects.</p>
-                        <a href="Essay.html" class="card-btn">Read Essays</a>
+                        <a href="Essay.html" class="card-btn">Read Essays →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-3">
-                    <div class="card-icon" style="background-color: #27ae60;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
                         <i>🌏</i>
                     </div>
                     <div class="card-content">
                         <h3>नेपाली</h3>
                         <p>Nepali language resources and learning materials.</p>
-                        <a href="nepali.html" class="card-btn">View Nepali</a>
+                        <a href="nepali.html" class="card-btn">View Nepali →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-3">
-                    <div class="card-icon" style="background-color: #f1c40f;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #eab308, #ca8a04);">
                         <i>🔤</i>
                     </div>
                     <div class="card-content">
                         <h3>Prepositions</h3>
                         <p>Learn about English prepositions and their usage.</p>
-                        <a href="preposition.html" class="card-btn">Learn Prepositions</a>
+                        <a href="preposition.html" class="card-btn">Learn Prepositions →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-4">
-                    <div class="card-icon" style="background-color: #1abc9c;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">
                         <i>🧪</i>
                     </div>
                     <div class="card-content">
                         <h3>Carboxylic Acids</h3>
                         <p>Chemistry resources on carboxylic acid compounds.</p>
-                        <a href="carboxylic.html" class="card-btn">Study Chemistry</a>
+                        <a href="carboxylic.html" class="card-btn">Study Chemistry →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-4">
-                    <div class="card-icon" style="background-color: #34495e;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #334155, #1e293b);">
                         <i>⚗️</i>
                     </div>
                     <div class="card-content">
                         <h3>Haloalkanes & Aldehydes</h3>
                         <p>Chemistry lessons on haloalkanes and aldehydes.</p>
-                        <a href="haloalkanesandaldehyde.html" class="card-btn">Study Chemistry</a>
+                        <a href="haloalkanesandaldehyde.html" class="card-btn">Study Chemistry →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-5">
-                    <div class="card-icon" style="background-color: #2c3e50;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #475569, #334155);">
+                        <i>🔬</i>
+                    </div  #475569, #334155);">
                         <i>🔬</i>
                     </div>
                     <div class="card-content">
                         <h3>Haloarenes</h3>
                         <p>Chemistry resources on haloarene compounds.</p>
-                        <a href="haloarenes.html" class="card-btn">Study Chemistry</a>
+                        <a href="haloarenes.html" class="card-btn">Study Chemistry →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-5">
-                    <div class="card-icon" style="background-color: #16a085;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #0ea5e9, #0284c7);">
                         <i>🧫</i>
                     </div>
                     <div class="card-content">
                         <h3>Nitro & Ether</h3>
                         <p>Chemistry lessons on nitro compounds and ethers.</p>
-                        <a href="nitroether.html" class="card-btn">Study Chemistry</a>
+                        <a href="nitroether.html" class="card-btn">Study Chemistry →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-5">
-                    <div class="card-icon" style="background-color: #8e44ad;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #9333ea, #7e22ce);">
                         <i>🧪</i>
                     </div>
                     <div class="card-content">
                         <h3>Phenol</h3>
                         <p>Chemistry resources on phenolic compounds.</p>
-                        <a href="phenol.html" class="card-btn">Study Chemistry</a>
+                        <a href="phenol.html" class="card-btn">Study Chemistry →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-5">
-                    <div class="card-icon" style="background-color: #d35400;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #c2410c, #9a3412);">
                         <i>📊</i>
                     </div>
                     <div class="card-content">
                         <h3>Grammar</h3>
                         <p>English grammar rules and explanations.</p>
-                        <a href="grammar.html" class="card-btn">Learn Grammar</a>
+                        <a href="grammar.html" class="card-btn">Learn Grammar →</a>
                     </div>
                 </div>
                 
                 <div class="card animate delay-5">
-                    <div class="card-icon" style="background-color: #c0392b;">
+                    <div class="card-icon" style="background: linear-gradient(135deg, #be123c, #9f1239);">
                         <i>✅</i>
                     </div>
                     <div class="card-content">
                         <h3>Grammar Quiz</h3>
                         <p>Test your English grammar knowledge with quizzes.</p>
-                        <a href="Quiz.html" class="card-btn">Take Quiz</a>
+                        <a href="Quiz.html" class="card-btn">Take Quiz →</a>
                     </div>
                 </div>
             </div>
         </section>
         
         <section id="about" class="about-section animate delay-2">
-            <h2>About Me</h2>
+            <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-image">
                     <svg width="300" height="300" viewBox="0 0 300 300">
-                        <circle cx="150" cy="120" r="70" fill="#3498db" />
-                        <circle cx="150" cy="105" r="20" fill="#ecf0f1" />
-                        <path d="M150,190 C194,190 230,230 240,280 L60,280 C70,230 106,190 150,190 Z" fill="#3498db" />
+                        <defs>
+                            <linearGradient id="avatarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#6366f1" />
+                                <stop offset="100%" stop-color="#4f46e5" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="150" cy="120" r="70" fill="url(#avatarGradient)" />
+                        <circle cx="150" cy="105" r="20" fill="#f8fafc" />
+                        <path d="M150,190 C194,190 230,230 240,280 L60,280 C70,230 106,190 150,190 Z" fill="url(#avatarGradient)" />
                     </svg>
                 </div>
                 <div class="about-text">
                     <h3>Mohan Paudel</h3>
-                    <p>I am an educator passionate about creating accessible learning resources. My collection covers a wide range of subjects from literature to chemistry and language studies.</p>
+                    <p>I am an educator passionate about creating accessible learning resources. My collection covers a wide range of subjects from literature to chemistry, computer science, and language studies.</p>
                     <p>With a focus on creating engaging educational content, I've developed materials that help students understand complex topics through clear explanations and practical examples.</p>
                     <h4>Areas of Expertise:</h4>
                     <div class="skills">
                         <span class="skill-tag">Chemistry</span>
+                        <span class="skill-tag">Computer Science</span>
                         <span class="skill-tag">English Grammar</span>
                         <span class="skill-tag">Nepali Language</span>
                         <span class="skill-tag">Literature</span>
