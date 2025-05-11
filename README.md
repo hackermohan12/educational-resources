@@ -104,7 +104,7 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 
 ## 👏 Acknowledgements
 
-Special thanks to **Rupesh** for his invaluable support, guidance, and collaboration throughout this project.
+Special thanks to **Dinesh** for his invaluable support, guidance, and collaboration throughout this project.
 
 ## 📜 License
 
