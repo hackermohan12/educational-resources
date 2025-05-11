@@ -51,7 +51,7 @@ This repository contains an interactive collection of educational resources cove
 
 ## 🚀 Live Demo
 
-Visit the live version of the website: [Mohan Paudel's Educational Resources](https://paudelmohan.com.np/) 
+Visit the live version of the website: [Mohan Paudel's Educational Resources](https://quiz.paudelmohan.com.np/) 
 
 ## 📄 Resource Descriptions
 
