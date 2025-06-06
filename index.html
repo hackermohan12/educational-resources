@@ -25,7 +25,7 @@
     <meta name="theme-color" content="#6366f1">
     
     <!-- Canonical URL -->
-    <meta rel="canonical" href="https://paudelmohan.com.np/">
+    <link rel="canonical" href="https://paudelmohan.com.np/">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -151,6 +151,8 @@
             margin-bottom: 3rem;
             position: relative;
             padding-bottom: 1rem;
+            font-size: 2.5rem;
+            color: var(--secondary-color);
         }
         
         .section-title::after {
@@ -321,6 +323,12 @@
             color: #475569;
         }
         
+        .about-text h4 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+        }
+        
         .skills {
             display: flex;
             flex-wrap: wrap;
@@ -428,6 +436,7 @@
             text-decoration: none;
             transition: var(--transition);
             font-size: 1.25rem;
+            cursor: pointer;
         }
         
         .social-link:hover {
@@ -591,6 +600,10 @@
             .grid-container {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
+            
+            .section-title {
+                font-size: 2rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -609,6 +622,15 @@
             
             .thanks-section {
                 padding: 2rem;
+            }
+            
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .about-image,
+            .about-text {
+                min-width: 100%;
             }
         }
         
@@ -648,11 +670,37 @@
         .card:hover .card-icon i {
             transform: scale(1.2);
         }
+        
+        /* Floating animation for particles */
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-10px) translateX(10px);
+            }
+            50% {
+                transform: translateY(0) translateX(20px);
+            }
+            75% {
+                transform: translateY(10px) translateX(10px);
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-bg"></div>
+        <div class="header-bg" id="headerBg"></div>
         <div class="header-content">
             <h1>Mohan Paudel</h1>
             <p>Welcome to my collection of educational resources</p>
@@ -774,8 +822,6 @@
                 
                 <div class="card animate delay-5">
                     <div class="card-icon" style="background: linear-gradient(135deg, #475569, #334155);">
-                        <i>🔬</i>
-                    </div  #475569, #334155);">
                         <i>🔬</i>
                     </div>
                     <div class="card-content">
@@ -907,10 +953,10 @@
     </div>
     
     <script>
-        // Back to top button
+        // Back to top button functionality
         const backToTopBtn = document.getElementById('backToTop');
         
-        window.addEventListener('scroll', () => {
+        window.addEventListener('scroll', function() {
             if (window.pageYOffset > 300) {
                 backToTopBtn.classList.add('active');
             } else {
@@ -918,7 +964,7 @@
             }
         });
         
-        backToTopBtn.addEventListener('click', (e) => {
+        backToTopBtn.addEventListener('click', function(e) {
             e.preventDefault();
             window.scrollTo({
                 top: 0,
@@ -927,35 +973,44 @@
         });
         
         // Smooth scrolling for navigation
-        document.querySelectorAll('nav a').forEach(anchor => {
+        document.querySelectorAll('nav a[href^="#"]').forEach(function(anchor) {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 const targetId = this.getAttribute('href');
                 const targetElement = document.querySelector(targetId);
                 
-                window.scrollTo({
-                    top: targetElement.offsetTop - 70,
-                    behavior: 'smooth'
-                });
+                if (targetElement) {
+                    const offsetTop = targetElement.offsetTop - 70;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
         
         // Modal functionality
         function showModal(type) {
-            document.getElementById(type + 'Modal').classList.add('show');
-            document.body.style.overflow = 'hidden';
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
         }
         
         function closeModal(type) {
-            document.getElementById(type + 'Modal').classList.remove('show');
-            document.body.style.overflow = 'auto';
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
         }
         
         // Close modal when clicking outside of it
-        window.addEventListener('click', (e) => {
+        window.addEventListener('click', function(e) {
             const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
+            modals.forEach(function(modal) {
                 if (e.target === modal) {
                     modal.classList.remove('show');
                     document.body.style.overflow = 'auto';
@@ -963,85 +1018,114 @@
             });
         });
         
-        // Apply intersection observer for fade-in animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal.show');
+                modals.forEach(function(modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+        });
+        
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
+                    entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
                 }
             });
-        }, {
-            threshold: 0.1
-        });
+        }, observerOptions);
         
-        document.querySelectorAll('.animate').forEach(element => {
-            element.style.opacity = 0;
+        // Apply intersection observer to animated elements
+        document.querySelectorAll('.animate').forEach(function(element) {
+            element.style.opacity = '0';
             element.style.transform = 'translateY(20px)';
             element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             observer.observe(element);
         });
         
-        // Add dynamic particles to header background
-        const headerBg = document.querySelector('.header-bg');
-        
+        // Create particles for header background
         function createParticles() {
+            const headerBg = document.getElementById('headerBg');
+            if (!headerBg) return;
+            
             headerBg.innerHTML = '';
-            const particleCount = 50;
+            const particleCount = 30; // Reduced for better performance
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 10 + 5 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-                particle.style.borderRadius = '50%';
+                particle.className = 'particle';
+                
+                const size = Math.random() * 8 + 3;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.top = Math.random() * 100 + '%';
-                particle.style.animation = `float ${Math.random() * 10 + 5}s linear infinite`;
                 particle.style.opacity = Math.random() * 0.5 + 0.1;
+                particle.style.animation = `float ${Math.random() * 10 + 5}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
                 
                 headerBg.appendChild(particle);
             }
         }
         
-        // Add floating animation
-        const styleSheet = document.createElement('style');
-        styleSheet.innerHTML = `
-            @keyframes float {
-                0% {
-                    transform: translateY(0) translateX(0);
-                }
-                25% {
-                    transform: translateY(-10px) translateX(10px);
-                }
-                50% {
-                    transform: translateY(0) translateX(20px);
-                }
-                75% {
-                    transform: translateY(10px) translateX(10px);
-                }
-                100% {
-                    transform: translateY(0) translateX(0);
-                }
-            }
-        `;
-        document.head.appendChild(styleSheet);
-        
+        // Initialize particles
         createParticles();
         
-        // Add hover effects to cards
-        document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('mouseover', () => {
-                card.style.transform = 'translateY(-15px)';
-                card.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.2)';
+        // Enhanced card hover effects
+        document.querySelectorAll('.card').forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px)';
+                this.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
             });
             
-            card.addEventListener('mouseout', () => {
-                card.style.transform = 'translateY(-10px)';
-                card.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.1)';
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
             });
         });
+        
+        // Add loading state for better UX
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+        
+        // Error handling for missing elements
+        function safeQuerySelector(selector) {
+            try {
+                return document.querySelector(selector);
+            } catch (error) {
+                console.warn('Element not found:', selector);
+                return null;
+            }
+        }
+        
+        // Performance optimization: Throttle scroll events
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+        
+        // Apply throttling to scroll events
+        window.addEventListener('scroll', throttle(function() {
+            // Back to top button logic is already handled above
+        }, 100));
     </script>
 </body>
 </html>
